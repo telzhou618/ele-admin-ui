@@ -38,7 +38,7 @@ export const constantRouterMap = [
   {
     path: '/system',
     component: Layout,
-    redirect: '/system/table',
+    redirect: '/system/user',
     name: 'System',
     meta: { title: '系统管理', icon: 'example' },
     children: [
@@ -46,13 +46,7 @@ export const constantRouterMap = [
         path: 'user',
         name: 'User',
         component: _import('system/user/index'),
-        meta: { title: '用户管理', icon: 'user' }
-      },
-      {
-        path: 'table',
-        name: 'Table',
-        component: _import('table/index'),
-        meta: { title: '表格', icon: 'table' }
+        meta: { title: '用户管理', icon: 'users' }
       },
       {
         path: 'role',

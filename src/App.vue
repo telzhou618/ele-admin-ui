@@ -12,7 +12,7 @@ export default {
 <style>
 .toolbar{
   padding: 10px;
-  background: #F2F6FC;
+  background: #f4f4f5;
 }
 </style>
 
