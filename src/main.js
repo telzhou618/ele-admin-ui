@@ -15,6 +15,11 @@ import store from './store'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+// 引用API文件
+import api from './api/index.js'
+// 将API方法绑定到全局
+Vue.prototype.$api = api
+
 Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false
