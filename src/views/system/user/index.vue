@@ -42,8 +42,8 @@
       </el-table-column>
       <el-table-column label="状态" align="center">
         <template slot-scope="scope">
-          <el-tag type="success" v-if="scope.row.userStatus===1">启用</el-tag>
-          <el-tag type="danger" v-else>禁用</el-tag>
+          <el-tag type="success" size="mini" v-if="scope.row.userStatus===1">启用</el-tag>
+          <el-tag type="danger" size="mini" v-else>禁用</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center"  width="200" label="操作">

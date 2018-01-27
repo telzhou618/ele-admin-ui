@@ -57,7 +57,7 @@
       </el-table-column>
       <el-table-column label="请求方式" align="center">
         <template slot-scope="scope">
-          <el-tag>{{scope.row.requestMethod}}</el-tag>
+          <el-tag :type="scope.row.requestMethod | requestMethodFilter" size="mini">{{scope.row.requestMethod}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="其他" align="center">
@@ -114,6 +114,16 @@ export default {
           { required: true, message: '请输入角色名称', trigger: 'blur' }
         ]
       }
+    }
+  },
+  filters: {
+    requestMethodFilter(requestMethod) {
+      const requestMethodMap = {
+        POST: '',
+        PUT: 'success',
+        DELETE: 'danger'
+      }
+      return requestMethodMap[requestMethod]
     }
   },
   created() {
