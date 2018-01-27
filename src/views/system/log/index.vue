@@ -5,8 +5,14 @@
       <el-col :span="24" class="toolbar">
          <el-input  @keyup.enter.native="fetchData(listQuery)" 
           placeholder="请输入关键词" v-model="listQuery.search"
-          style="width:250px;float:left;">
-           <el-button slot="append" icon="el-icon-search" @click="fetchData(listQuery)"></el-button>
+          style="width:350px;">
+          <el-select v-model="listQuery.field"  slot="prepend" placeholder="请选择" style="width:120px;">
+            <el-option label="用户名" value="userName"></el-option>
+            <el-option label="日志标题" value="logTitle"></el-option>
+            <el-option label="日志内容" value="logContent"></el-option>
+            <el-option label="日志参数" value="requestParams"></el-option>
+          </el-select>
+          <el-button slot="append" icon="el-icon-search" @click="fetchData(listQuery)"></el-button>
         </el-input>
       </el-col>
     </el-row>
