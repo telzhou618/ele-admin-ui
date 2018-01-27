@@ -40,7 +40,7 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/system/user',
     name: 'System',
-    meta: { title: '系统管理', icon: 'example' },
+    meta: { title: '系统管理', icon: 'set' },
     children: [
       {
         path: 'user',
@@ -59,6 +59,12 @@ export const constantRouterMap = [
         name: 'Tree',
         component: _import('tree/index'),
         meta: { title: '菜单管理', icon: 'tree' }
+      },
+      {
+        path: 'log',
+        name: 'Log',
+        component: _import('system/log/index'),
+        meta: { title: '日志管理', icon: 'information' }
       }
     ]
   },
@@ -71,7 +77,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'Form',
         component: _import('form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        meta: { title: '礼包管理', icon: 'gifts' }
       }
     ]
   },

@@ -5,9 +5,10 @@
       <el-col :span="24" class="toolbar">
         <el-button icon="el-icon-plus" type="primary" @click="showAdd">新增</el-button>
         <el-button icon="el-icon-close" type="danger" :disabled="this.sels.length===0" @click="batchRemove">批量删除</el-button>
-         <el-input
-          placeholder="请输入内容"
-          prefix-icon="el-icon-search" style="width:250px;float:right;">
+         <el-input  @keyup.enter.native="fetchData(listQuery)" 
+          placeholder="请输入关键词" v-model="listQuery.search"
+          style="width:250px;float:right;">
+           <el-button slot="append" icon="el-icon-search" @click="fetchData(listQuery)"></el-button>
         </el-input>
       </el-col>
     </el-row>
@@ -115,7 +116,9 @@ export default {
       listQuery:{
         size:10,
         total:0,
-        page:1
+        page:1,
+        search:'',
+        field:'userName'
       },
       sels:[],//选中的列表
       form :{
@@ -180,7 +183,7 @@ export default {
     //获取数据列表
     fetchData(params) {
       this.listLoading = true
-      this.$api.get('/user/page',{params},response=>{
+      this.$api.get('/user/page',params,response=>{
         this.list = response.data.records
         this.listQuery.total = response.data.total
         this.listLoading = false
