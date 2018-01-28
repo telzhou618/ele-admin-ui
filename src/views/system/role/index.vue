@@ -5,10 +5,10 @@
       <el-col :span="24" class="toolbar">
         <el-button icon="el-icon-plus" type="primary" @click="showAdd">新增</el-button>
         <el-button icon="el-icon-close" type="danger" :disabled="this.sels.length===0" @click="batchRemove">批量删除</el-button>
-         <el-input  @keyup.enter.native="fetchData(listQuery)" 
+         <el-input  @keyup.enter.native="fetchData" 
           placeholder="请输入关键词" v-model="listQuery.search"
           style="width:250px;float:right;">
-           <el-button slot="append" icon="el-icon-search" @click="fetchData(listQuery)"></el-button>
+           <el-button slot="append" icon="el-icon-search" @click="fetchData"></el-button>
         </el-input>
       </el-col>
     </el-row>
@@ -112,7 +112,7 @@ export default {
     }
   },
   created() {
-    this.fetchData(this.listQuery)
+    this.fetchData()
   },
   methods: {
     selsChange: function (sels) {
@@ -124,18 +124,20 @@ export default {
       this.form.dialogVisible = true
       this.form.save = {loading:false,text:'立即保存'}
       this.form.fields = {}
+      this.$refs.form.resetFields()
     },
     //编辑显示
     showEdit(index, row){
       this.form.dialogVisible = true
       this.form.title='编辑'
       this.form.save = {loading:false,text:'立即保存'}
-      this.form.fields = Object.assign({}, row);
+      this.form.fields = Object.assign({}, row)
+      this.$refs.form.resetFields()
     },
     //获取数据列表
-    fetchData(params) {
+    fetchData() {
       this.listLoading = true
-      this.$api.get('/role/page',params,response=>{
+      this.$api.get('/role/page',this.listQuery,response=>{
         this.list = response.data.records
         this.listQuery.total = response.data.total
         this.listLoading = false
@@ -149,43 +151,32 @@ export default {
             let method = this.form.fields.id ? "PUT" : "POST"
             this.$api.request(method,'/role',this.form.fields,response =>{
               this.form.dialogVisible = false
-              this.fetchData(this.listQuery)
+              this.fetchData()
+            },()=>{
+              this.form.save = {loading:false,text:'立即保存'}
             })
 					}
 				});
     },
     //删除
     delRow(id) {
-      this.$confirm('此操作将永久删除该条记录, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$api.delete('/role/'+id,{},r=>{
-            this.fetchData(this.listQuery);
-            this.$message({type:'success',message:'删除成功!'});
-          })
-        });
+      this.$api.delete('/role/'+id,{},r=>{
+        this.fetchData();
+        this.$message.success('删除成功!')
+      })
     },
     //分页查询
     changePage(page){
       this.listQuery.page = page
-      this.fetchData(this.listQuery)
+      this.fetchData()
     },
     //批量删除
     batchRemove: function () {
       var ids = this.sels.map(item => item.id).toString();
-      this.$confirm('确认删除选中记录吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.listLoading = true;
-        this.$api.delete('/role/del/batch?ids='+ids,{},r=>{
-            this.fetchData(this.listQuery);
-            this.$message({type:'success',message:'删除成功!'});
-          })
-      });
+      this.$api.delete('/role/del/batch?ids='+ids,{},()=>{
+        this.fetchData();
+        this.$message.success('删除成功!')
+      })
     }
   }
 }

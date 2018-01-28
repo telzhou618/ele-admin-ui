@@ -1,3 +1,4 @@
+import { Message, MessageBox } from 'element-ui'
 // 配置API接口地址
 var root = 'http://localhost:8080/vue-admin'
 // 引用axios
@@ -45,35 +46,45 @@ function apiAxios (method, url, params, success, failure) {
         success(res.data)
       }
     } else {
+      Message.error(res.data.message)
       if (failure) {
         failure(res.data)
-      } else {
-        window.alert('error: ' + JSON.stringify(res.data))
-      }
+      } 
     }
   })
   .catch(function (err) {
     let res = err.response
     if (err) {
-      window.alert('error: ' + JSON.stringify(res.data))
+      Message.error('error: ' + JSON.stringify(res.data))
     }
   })
 }
 
 // 返回在vue模板中的调用接口
 export default {
+  //get请求
   get: function (url, params, success, failure) {
     return apiAxios('GET', url, params, success, failure)
   },
+  //post请求
   post: function (url, params, success, failure) {
     return apiAxios('POST', url, params, success, failure)
   },
+  //put请求
   put: function (url, params, success, failure) {
     return apiAxios('PUT', url, params, success, failure)
   },
+  //删除
   delete: function (url, params, success, failure) {
-    return apiAxios('DELETE', url, params, success, failure)
+    MessageBox.confirm('此操作将永久删除选择的记录, 是否继续?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      return apiAxios('DELETE', url, params, success, failure)
+    });
   },
+  //请求
   request: function (method,url, params, success, failure) {
     return apiAxios(method, url, params, success, failure)
   }

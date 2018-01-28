@@ -27,11 +27,3 @@ export function del(params) {
     method: 'delete'
   })
 }
-
-export function exec(params){
-  return request({
-    url: '/role',
-    method: params.method,
-    params
-  })
-}
