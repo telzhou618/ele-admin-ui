@@ -3,7 +3,7 @@
     <!--导航-->
     <el-row>
       <el-col :span="24" class="toolbar">
-         <el-input  @keyup.enter.native="fetchData(listQuery)" 
+         <el-input  @keyup.enter.native="fetchData" 
           placeholder="请输入关键词" v-model="listQuery.search"
           style="width:350px;">
           <el-select v-model="listQuery.field"  slot="prepend" placeholder="请选择" style="width:120px;">
@@ -11,8 +11,9 @@
             <el-option label="日志标题" value="logTitle"></el-option>
             <el-option label="日志内容" value="logContent"></el-option>
             <el-option label="日志参数" value="requestParams"></el-option>
+            <el-option label="请求方式" value="requestMethod"></el-option>
           </el-select>
-          <el-button slot="append" icon="el-icon-search" @click="fetchData(listQuery)"></el-button>
+          <el-button slot="append" icon="el-icon-search" @click="fetchData"></el-button>
         </el-input>
       </el-col>
     </el-row>
@@ -20,8 +21,8 @@
     <el-table :data="list" v-loading.body="listLoading" element-loading-text="Loading"  fit highlight-current-row>
        <el-table-column type="expand">
         <template slot-scope="props">
-          <el-tag>参数</el-tag>
-          <span>{{ props.row.requestParams }}</span>
+          <p><el-tag>URL</el-tag><span>&nbsp;{{ props.row.logUrl }}</span></p>
+          <p><el-tag>数据</el-tag><span>&nbsp;{{ props.row.requestParams }}</span></p>
         </template>
       </el-table-column>
       <el-table-column align="center" label='编号' width="95">
@@ -38,6 +39,11 @@
         <template slot-scope="scope">
           <span>{{scope.row.logTitle}}</span>
         </template>
+      </el-table-column>
+      <el-table-column label="日志URL" align="center" width="350">
+      <template slot-scope="scope">
+        <span>{{ scope.row.logUrl.substring(0,40)}}</span>
+      </template>
       </el-table-column>
       <el-table-column label="日志内容" align="center">
         <template slot-scope="scope">
@@ -60,11 +66,13 @@
           <el-tag :type="scope.row.requestMethod | requestMethodFilter" size="mini">{{scope.row.requestMethod}}</el-tag>
         </template>
       </el-table-column>
+      <!--
       <el-table-column label="其他" align="center">
         <template slot-scope="scope">
            <span>{{scope.row.other}}</span>
         </template>
       </el-table-column>
+      -->
     </el-table>
     <!--分页条-->
     <el-row>
@@ -94,25 +102,6 @@ export default {
         page:1,
         search:'',
         field:'logContent'
-      },
-      sels:[],//选中的列表
-      form :{
-         dialogVisible: false,
-         saveLoading: false,
-         title:'',
-         save:{
-           loading:false,
-           text:'立即保存'
-         },
-         fields:{
-             roleName: '',
-             roleDesc: ''
-         }
-      },
-      formRules: {
-        roleName: [
-          { required: true, message: '请输入角色名称', trigger: 'blur' }
-        ]
       }
     }
   },
@@ -127,81 +116,24 @@ export default {
     }
   },
   created() {
-    this.fetchData(this.listQuery)
+    this.fetchData()
   },
   methods: {
-    selsChange: function (sels) {
-			this.sels = sels;
-		},
-    //新增显示
-    showAdd(){
-      this.form.title='新增'
-      this.form.dialogVisible = true
-      this.form.save = {loading:false,text:'立即保存'}
-      this.form.fields = {}
-    },
-    //编辑显示
-    showEdit(index, row){
-      this.form.dialogVisible = true
-      this.form.title='编辑'
-      this.form.save = {loading:false,text:'立即保存'}
-      this.form.fields = Object.assign({}, row);
-    },
     //获取数据列表
-    fetchData(params) {
+    fetchData() {
       this.listLoading = true
-      this.$api.get('/log/page',params,response=>{
+      this.$api.get('/log/page',this.listQuery,response=>{
         this.list = response.data.records
         this.listQuery.total = response.data.total
         this.listLoading = false
       });
     },
-    //提交表单
-    subimtForm(){
-      this.$refs.form.validate((valid) => {
-					if (valid) {
-            this.form.save = {loading:true,text:'保存中'};
-            let method = this.form.fields.id ? "PUT" : "POST"
-            this.$api.request(method,'/role',this.form.fields,response =>{
-              this.form.dialogVisible = false
-              this.fetchData(this.listQuery)
-            })
-					}
-				});
-    },
-    //删除
-    delRow(id) {
-      this.$confirm('此操作将永久删除该条记录, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$api.delete('/log/'+id,{},r=>{
-            this.fetchData(this.listQuery);
-            this.$message({type:'success',message:'删除成功!'});
-          })
-        });
-    },
     //分页查询
     changePage(page){
       this.listQuery.page = page
-      this.fetchData(this.listQuery)
-    },
-    //批量删除
-    batchRemove: function () {
-      var ids = this.sels.map(item => item.id).toString();
-      this.$confirm('确认删除选中记录吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.listLoading = true;
-        this.$api.delete('/log/del/batch?ids='+ids,{},r=>{
-            this.fetchData(this.listQuery);
-            this.$message({type:'success',message:'删除成功!'});
-          })
-      });
+      this.fetchData()
     }
   }
 }
 </script>
+
