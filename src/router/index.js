@@ -57,7 +57,7 @@ export const constantRouterMap = [
       {
         path: 'tree',
         name: 'Tree',
-        component: _import('tree/index'),
+        component: _import('system/menu/index'),
         meta: { title: '菜单管理', icon: 'tree' }
       },
       {

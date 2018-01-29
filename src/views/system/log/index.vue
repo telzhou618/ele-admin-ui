@@ -3,7 +3,7 @@
     <!--导航-->
     <el-row>
       <el-col :span="24" class="toolbar">
-         <el-input  @keyup.enter.native="fetchData" 
+         <el-input  @keyup.enter.native="fetchData"
           placeholder="请输入关键词" v-model="listQuery.search"
           style="width:350px;">
           <el-select v-model="listQuery.field"  slot="prepend" placeholder="请选择" style="width:120px;">
@@ -42,7 +42,7 @@
       </el-table-column>
       <el-table-column label="日志URL" align="center" width="350">
       <template slot-scope="scope">
-        <span>{{ scope.row.logUrl.substring(0,40)}}</span>
+        <span>{{ scope.row.logUrl ? scope.row.logUrl.substring(0,40) : ''}}</span>
       </template>
       </el-table-column>
       <el-table-column label="日志内容" align="center">

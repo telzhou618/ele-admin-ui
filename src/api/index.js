@@ -49,13 +49,13 @@ function apiAxios (method, url, params, success, failure) {
       Message.error(res.data.message)
       if (failure) {
         failure(res.data)
-      } 
+      }
     }
   })
   .catch(function (err) {
     let res = err.response
     if (err) {
-      Message.error('error: ' + JSON.stringify(res.data))
+      Message.error('error: ' + JSON.stringify(res))
     }
   })
 }
