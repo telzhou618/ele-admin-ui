@@ -13,6 +13,7 @@ export default {
 .toolbar{
   padding: 10px;
   background: #f4f4f5;
+  border-left:3px solid #409EFF;
 }
 </style>
 

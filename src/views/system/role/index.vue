@@ -24,18 +24,19 @@
         </template>
       </el-table-column>
       
-      <el-table-column label="角色名称" align="center">
+      <el-table-column label="角色名称" align="left">
         <template slot-scope="scope">
           <span>{{scope.row.roleName}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="角色描述" align="center">
+      <el-table-column label="角色描述" align="left">
         <template slot-scope="scope">
           <span>{{scope.row.roleDesc}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center"  width="200" label="操作">
+      <el-table-column align="center"  width="300" label="操作">
         <template slot-scope="scope">
+         <el-button icon="el-icon-setting" type="primary" size="mini" @click="toAuth(scope.row.id)">权限</el-button>
          <el-button icon="el-icon-edit" type="success" @click="showEdit(scope.$index, scope.row)" size="mini">编辑</el-button>
          <el-button icon="el-icon-close" type="danger" size="mini" @click="delRow(scope.row.id)">删除</el-button>
         </template>
@@ -73,7 +74,6 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-
   </div>
 </template>
 
@@ -177,6 +177,10 @@ export default {
         this.fetchData();
         this.$message.success('删除成功!')
       })
+    },
+    //显示分配权限窗口
+    toAuth(id) {
+      this.$router.push('/system/auth/'+id)
     }
   }
 }

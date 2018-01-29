@@ -55,6 +55,13 @@ export const constantRouterMap = [
         meta: { title: '角色管理', icon: 'table' }
       },
       {
+        path: 'auth/:id',
+        name: 'auth',
+        component: _import('system/role/auth'),
+        meta: { title: '分配权限', icon: 'table' },
+        hidden:true
+      },
+      {
         path: 'tree',
         name: 'Tree',
         component: _import('system/menu/index'),
