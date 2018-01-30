@@ -74,13 +74,28 @@
       width="40%">
       <el-form ref="form" :model="form.fields" label-width="80px" :rules="formRules" status-icon >
         <el-form-item label="用户名" prop="userName">
-          <el-input v-model="form.fields.userName"></el-input>
+          <el-input v-model="form.fields.userName" :readonly="form.userNameReadOnly"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input v-model="form.fields.password" type="password"></el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop="password2">
           <el-input v-model="form.fields.password2" type="password"></el-input>
+        </el-form-item>
+        <el-form-item label="角色" prop="roleIds">
+          <el-select
+            v-model="form.fields.roleIds"
+            multiple
+            filterable
+            default-first-option
+            placeholder="选择角色">
+            <el-option
+              v-for="item in roles"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="状态">
           <el-switch v-model="form.fields.userStatus"></el-switch>
@@ -123,18 +138,21 @@ export default {
          dialogVisible: false,
          saveLoading: false,
          title:'',
+         userNameReadOnly:false,
          save:{
            loading:false,
            text:'立即保存'
          },
          fields:{
-             userName: '',
-             password:'',
-             password2:'',
-             userStatus:1,
-             userDesc: ''
+            userName: '',
+            password:'',
+            password2:'',
+            userStatus:1,
+            userDesc: '',
+            roleIds: []
          }
       },
+      roles: [],
       formRules: {
         userName: [
           { required: true, message: '请输入用户名称', trigger: 'blur' }
@@ -151,6 +169,7 @@ export default {
   },
   created() {
     this.fetchData()
+    this.getRoles()
   },
   methods: {
     selsChange: function (sels) {
@@ -159,24 +178,33 @@ export default {
     //新增显示
     showAdd(){
       this.form.title='新增'
+      this.form.userNameReadOnly = false
       this.form.dialogVisible = true
       this.form.save = {loading:false,text:'立即保存'}
-      this.form.fields = {userStatus:true}
-      this.$refs.form.resetFields()
+      this.form.fields = {userName: '', password:'', password2:'', userStatus:1, userDesc: '', roleIds: [],userStatus:true}
+     // this.$refs.form.resetFields()
     },
     //编辑显示
     showEdit(index,item){
-      let row =JSON.parse(JSON.stringify(item));
       this.form.dialogVisible = true
+      let row =JSON.parse(JSON.stringify(item));
       this.form.title='编辑'
+      this.form.userNameReadOnly = true
       this.form.save = {loading:false,text:'立即保存'}
       row.userStatus = item.userStatus === 1 ? true : false;
       row.password=''
       row.password2 =''
       this.formRules.password=[]
       this.formRules.password2=[]
-      this.form.fields = Object.assign({}, row);
-      this.$refs.form.resetFields()
+      let fds = {userName: '', password:'', password2:'', userStatus:1, userDesc: '', roleIds: [],userStatus:true}
+      this.form.save = {loading:true,text:'加载中'}
+      this.$api.get('/role/uid?',{userId:item.id},response=>{
+        fds.roleIds = response.data
+        this.form.fields = Object.assign(fds, row);
+        this.form.save = {loading:false,text:'立即保存'}
+      })
+     // this.getUserRoles(item.id)
+    //  this.$refs.form.resetFields()
     },
     //获取数据列表
     fetchData() {
@@ -187,6 +215,13 @@ export default {
         this.listLoading = false
       });
     },
+    //获取所有角色
+    getRoles() {
+      this.listLoading = true
+      this.$api.get('/role',{},response=>{
+        this.roles = response.data
+      })
+    },
     //提交表单
     subimtForm(){
       this.$refs.form.validate((valid) => {
@@ -195,11 +230,17 @@ export default {
             delete params.createTime
             params.userStatus = params.userStatus?1:0
             this.form.save = {loading:true,text:'保存中'};
-            let method = this.form.fields.id ? "PUT" : "POST"
-            this.$api.request(method,'/user',this.form.fields,response =>{
-              this.form.dialogVisible = false
-              this.fetchData()
-            })
+            if(this.form.fields.id){
+              this.$api.put('/user/edit',this.form.fields,response =>{
+                this.form.dialogVisible = false
+                this.fetchData()
+              })
+            }else{
+              this.$api.post('/user/add',this.form.fields,response =>{
+                this.form.dialogVisible = false
+                this.fetchData()
+              })
+            }
 					}
 				});
     },

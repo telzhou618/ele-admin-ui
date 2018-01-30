@@ -28,6 +28,7 @@
     <el-row>
       <el-col :span="24" class="toolbar">
         <el-button type="primary" @click="saveAuth" :loading="saveBtn.loading">{{saveBtn.text}}</el-button>
+        <el-button  @click="gotoRole">返回</el-button>
       </el-col>
     </el-row>
   </div>
