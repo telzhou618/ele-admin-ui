@@ -4,7 +4,7 @@
     <el-row>
       <el-col :span="24" class="toolbar">
         <el-button icon="el-icon-plus" type="primary" @click="showAdd">新增</el-button>
-        <el-button icon="el-icon-close" type="danger" :disabled="this.sels.length===0" @click="batchRemove">批量删除</el-button>
+        <el-button icon="el-icon-close" type="danger"  :disabled="this.sels.length===0" @click="batchRemove">批量删除</el-button>
          <el-input  @keyup.enter.native="fetchData" 
           placeholder="请输入关键词" v-model="listQuery.search"
           style="width:250px;float:right;">
