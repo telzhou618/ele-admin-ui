@@ -47,6 +47,9 @@ export default {
       return data.menuName.indexOf(value) !== -1
     },
     loadNode(node, resolve) {
+      if(node.level === 3){
+        return resolve([])
+      }
       this.$api.get('/menu/getByPid', { pid: node.key }, response => {
         return resolve(response.data)
       })

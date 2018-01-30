@@ -21,12 +21,13 @@
        show-checkbox
        node-key="id"
        :filter-node-method="filterNode"
+       :default-checked-keys="roleAuth"
        default-expand-all
        ref="tree2">
     </el-tree>
     <el-row>
       <el-col :span="24" class="toolbar">
-        <el-button type="primary" @click="saveAuth">立即保存</el-button>
+        <el-button type="primary" @click="saveAuth" :loading="saveBtn.loading">{{saveBtn.text}}</el-button>
       </el-col>
     </el-row>
   </div>
@@ -47,12 +48,18 @@ export default {
         label: 'menuName',
         id: 'id'
       },
+      saveBtn : {
+        loading:false,
+        text:'立即保存'
+      },
       roleName:'',
-      roleId: this.$route.params.id
+      roleId: this.$route.params.id,
+      roleAuth: []
     }
   },
   created(){
     this.getRole()
+    this.getRoleAuth()
   },
   methods: {
     //过滤方法
@@ -62,7 +69,10 @@ export default {
     },
     //加载节点
     loadNode(node, resolve) {
-      this.$api.get('/menu/getByPid', { pid: node.key }, response => {
+      if(node.level === 3){
+        return resolve([])
+      }
+      this.$api.get('/menu/getByPid', { pid: node.key,roleId:this.roleId }, response => {
         return resolve(response.data)
       })
     },
@@ -76,9 +86,19 @@ export default {
         this.roleName = response.data.roleName
       })
     },
+    getRoleAuth(){
+      this.$api.get('/role/auth', {roleId: this.roleId}, response => {
+        this.roleAuth = response.data
+      })
+    },
     //保存权限
     saveAuth(){
-      this.$alert('保存权限未完成')
+      let keys = this.$refs.tree2.getCheckedKeys();
+      this.saveBtn = {loading:true,text:'保存中'};
+      this.$api.post('/role/doAuth', {roleId: this.roleId,menuIds:keys}, response => {
+        this.$message.success('权限分配成功!')
+        this.saveBtn = {loading:false,text:'立即保存'};
+      })
     }
   }
 }
