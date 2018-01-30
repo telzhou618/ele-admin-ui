@@ -4,6 +4,7 @@
     <breadcrumb></breadcrumb>
     <el-dropdown class="avatar-container" trigger="click">
       <div class="avatar-wrapper">
+        <div class="title">超级管理员</div>
         <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'">
         <i class="el-icon-caret-bottom"></i>
       </div>
@@ -51,6 +52,12 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+.title{
+  font-size: 14px;
+  line-height: 40px;
+  margin-right: 10px;
+  float: left;
+}
 .navbar {
   height: 50px;
   line-height: 50px;
@@ -79,7 +86,7 @@ export default {
       .user-avatar {
         width: 40px;
         height: 40px;
-        border-radius: 10px;
+        border-radius: 20px;
       }
       .el-icon-caret-bottom {
         position: absolute;

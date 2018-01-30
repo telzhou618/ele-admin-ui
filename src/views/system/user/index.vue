@@ -203,8 +203,7 @@ export default {
         this.form.fields = Object.assign(fds, row);
         this.form.save = {loading:false,text:'立即保存'}
       })
-     // this.getUserRoles(item.id)
-    //  this.$refs.form.resetFields()
+     // this.$refs.form.resetFields()
     },
     //获取数据列表
     fetchData() {
