@@ -4,7 +4,7 @@ export function login(username, password) {
   return request({
     url: '/login/doLogin',
     method: 'post',
-    data: {
+    params: {
       username,
       password
     }
