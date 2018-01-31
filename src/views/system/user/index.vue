@@ -182,7 +182,7 @@ export default {
       this.form.dialogVisible = true
       this.form.save = {loading:false,text:'立即保存'}
       this.form.fields = {userName: '', password:'', password2:'', userStatus:1, userDesc: '', roleIds: [],userStatus:true}
-     // this.$refs.form.resetFields()
+      //this.$refs.form.resetFields()
     },
     //编辑显示
     showEdit(index,item){
@@ -203,7 +203,7 @@ export default {
         this.form.fields = Object.assign(fds, row);
         this.form.save = {loading:false,text:'立即保存'}
       })
-     // this.$refs.form.resetFields()
+     //this.$refs.form.resetFields()
     },
     //获取数据列表
     fetchData() {
@@ -233,11 +233,15 @@ export default {
               this.$api.put('/user/edit',this.form.fields,response =>{
                 this.form.dialogVisible = false
                 this.fetchData()
+              },()=>{
+                this.form.save = {loading:false,text:'立即保存'}
               })
             }else{
               this.$api.post('/user/add',this.form.fields,response =>{
                 this.form.dialogVisible = false
                 this.fetchData()
+              },()=>{
+                this.form.save = {loading:false,text:'立即保存'}
               })
             }
 					}
