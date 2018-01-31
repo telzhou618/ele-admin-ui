@@ -114,6 +114,10 @@
 </template>
 
 <script>
+
+import { getList,getRoleIds,add,edit,del } from '@/api/user'
+import { getAll } from '@/api/role'
+
 export default {
   data() {
     var validatePass2 = (rule, value, callback) => {
@@ -198,7 +202,7 @@ export default {
       this.formRules.password2=[]
       let fds = {userName: '', password:'', password2:'', userStatus:1, userDesc: '', roleIds: [],userStatus:true}
       this.form.save = {loading:true,text:'加载中'}
-      this.$api.get('/role/uid?',{userId:item.id},response=>{
+      getRoleIds(item.id).then(response => {
         fds.roleIds = response.data
         this.form.fields = Object.assign(fds, row);
         this.form.save = {loading:false,text:'立即保存'}
@@ -208,16 +212,16 @@ export default {
     //获取数据列表
     fetchData() {
       this.listLoading = true
-      this.$api.get('/user/page',this.listQuery,response=>{
+      getList(this.listQuery).then(response => {
         this.list = response.data.records
         this.listQuery.total = response.data.total
         this.listLoading = false
-      });
+      })
     },
     //获取所有角色
     getRoles() {
       this.listLoading = true
-      this.$api.get('/role',{},response=>{
+      getAll().then(response => {
         this.roles = response.data
       })
     },
@@ -230,18 +234,26 @@ export default {
             params.userStatus = params.userStatus?1:0
             this.form.save = {loading:true,text:'保存中'};
             if(this.form.fields.id){
-              this.$api.put('/user/edit',this.form.fields,response =>{
-                this.form.dialogVisible = false
-                this.fetchData()
-              },()=>{
-                this.form.save = {loading:false,text:'立即保存'}
+              edit(this.form.fields).then(response => {
+                  if(response.success){
+                    this.$message.success('更新成功!');
+                    this.form.dialogVisible = false
+                    this.fetchData()
+                  }else{
+                    this.$message.error(response.message);
+                  }
+                  this.form.save = {loading:false,text:'立即保存'}
               })
             }else{
-              this.$api.post('/user/add',this.form.fields,response =>{
-                this.form.dialogVisible = false
-                this.fetchData()
-              },()=>{
-                this.form.save = {loading:false,text:'立即保存'}
+              add(this.form.fields).then(response => {
+                  if(response.success){
+                    this.$message.success('新增成功!');
+                    this.form.dialogVisible = false
+                    this.fetchData()
+                  }else{
+                    this.$message.error(response.message);
+                  }
+                  this.form.save = {loading:false,text:'立即保存'}
               })
             }
 					}
@@ -249,9 +261,13 @@ export default {
     },
     //删除
     delRow(id) {
-      this.$api.delete('/user/'+id,{},r=>{
-        this.fetchData();
-        this.$message.success('删除成功!');
+      del({ids:id}).then(response => {
+        if(response.success){
+          this.fetchData();
+          this.$message.success('删除成功!');
+        }else{
+          this.$message.error(response.message);
+        }
       })
     },
     //分页查询
@@ -262,9 +278,13 @@ export default {
     //批量删除
     batchRemove: function () {
       var ids = this.sels.map(item => item.id).toString();
-      this.$api.delete('/user/del/batch?ids='+ids,{},r=>{
-        this.fetchData();
-        this.$message.success('删除成功!');
+      del(ids).then(response => {
+        if(response.success){
+          this.fetchData();
+          this.$message.success('删除成功!');
+        }else{
+          this.$message.error(response.message);
+        }
       })
     }
   }

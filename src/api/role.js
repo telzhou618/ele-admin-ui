@@ -1,5 +1,13 @@
 import request from '@/utils/request'
 
+//获取所有角色
+export function getAll(){
+  return request({
+    url: '/system/role/all',
+    method: 'get'
+  })
+}
+
 export function getList(params) {
   return request({
     url: '/role/page',

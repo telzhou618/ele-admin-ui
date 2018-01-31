@@ -1,6 +1,6 @@
 import { Message, MessageBox } from 'element-ui'
 // 配置API接口地址
-var root = 'http://localhost:8080/ele-admin-api'
+var root = process.env.BASE_API
 // 引用axios
 var axios = require('axios')
 // 自定义判断元素类型JS
@@ -32,6 +32,7 @@ function apiAxios (method, url, params, success, failure) {
     params = filterNull(params)
   }
   axios({
+    timeout: 15000,
     method: method,
     url: url,
    // data: method === 'POST' || method === 'PUT' ? params : null,
@@ -74,7 +75,7 @@ export default {
   put: function (url, params, success, failure) {
     return apiAxios('PUT', url, params, success, failure)
   },
-  //删除
+  //delete请求
   delete: function (url, params, success, failure) {
     MessageBox.confirm('此操作将永久删除选择的记录, 是否继续?', '提示', {
       confirmButtonText: '确定',
