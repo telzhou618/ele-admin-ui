@@ -1,6 +1,6 @@
 import { Message, MessageBox } from 'element-ui'
 // 配置API接口地址
-var root = 'http://localhost:8080/vue-admin'
+var root = 'http://localhost:8080/ele-admin-api'
 // 引用axios
 var axios = require('axios')
 // 自定义判断元素类型JS

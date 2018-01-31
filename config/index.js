@@ -47,7 +47,7 @@ module.exports = {
     // just be aware of this issue when enabling this option.
     cssSourceMap: false,
     proxyTable: {
-      '/vue-admin/**': {
+      '/ele-admin-api/**': {
         target: 'http://localhost:8081/', // 你接口的域名
         secure: false,
         changeOrigin: false,
