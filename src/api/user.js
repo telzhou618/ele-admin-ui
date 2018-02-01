@@ -1,39 +1,6 @@
-import request from '@/utils/request'
-
-export function getList(params) {
-  return request({
-    url: '/system/user/list',
-    method: 'get',
-    params
-  })
-}
-export function getRoleIds(userId) {
-  return request({
-    url: '/system/user/getRoleIds',
-    method: 'get',
-    params:{
-      userId : userId
-    }
-  })
-}
-export function add(params) {
-  return request({
-    url: '/system/user/add',
-    method: 'post',
-    params
-  })
-}
-export function edit(params) {
-  return request({
-    url: '/system/user/edit',
-    method: 'put',
-    params
-  })
-}
-export function del(params) {
-  return request({
-    url: '/system/user/delete',
-    method: 'delete',
-    params
-  })
-}
+export  const add =  {method: 'POST',url: '/system/user/add'}
+export  const del = {method: 'DELETE',url: '/system/user/delete'}
+export  const edit = {method: 'PUT',url: '/system/user/edit'}
+export  const list= {method: 'GET',url: '/system/user/list'}
+export  const all= {method: 'GET',url: '/system/user/all'}
+export  const getRoleIds= {method: 'GET',url: '/system/user/getRoleIds'}

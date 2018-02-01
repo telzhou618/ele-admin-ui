@@ -23,7 +23,7 @@
         </el-button>
       </el-form-item>
       <div class="tips">
-        <span>用户名/密码: admin/admin</span>
+        <span>用户名/密码: admin/123456</span>
       </div>
     </el-form>
   </div>

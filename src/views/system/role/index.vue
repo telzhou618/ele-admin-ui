@@ -24,14 +24,30 @@
         </template>
       </el-table-column>
       
-      <el-table-column label="角色名称" align="left">
+      <el-table-column label="角色名称">
         <template slot-scope="scope">
           <span>{{scope.row.roleName}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="角色描述" align="left">
+      <el-table-column label="角色标识">
+        <template slot-scope="scope">
+          <span>{{scope.row.roleCode}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="角色描述" >
         <template slot-scope="scope">
           <span>{{scope.row.roleDesc}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" >
+        <template slot-scope="scope">
+          <span>{{scope.row.createTime}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="状态" >
+        <template slot-scope="scope">
+          <el-tag type="success" v-if="scope.row.roleState === 1">启用</el-tag>
+          <el-tag type="danger" v-else>禁用</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center"  width="300" label="操作">
@@ -65,8 +81,14 @@
         <el-form-item label="角色名称" prop="roleName">
           <el-input v-model="form.fields.roleName"></el-input>
         </el-form-item>
+        <el-form-item label="角色标识" prop="roleCode">
+          <el-input v-model="form.fields.roleCode"></el-input>
+        </el-form-item>
         <el-form-item label="角色描述">
           <el-input type="textarea" v-model="form.fields.roleDesc"></el-input>
+        </el-form-item>
+         <el-form-item label="状态">
+          <el-switch v-model="form.fields.roleState"></el-switch>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="subimtForm" :loading="form.save.loading">{{form.save.text}}</el-button>
@@ -78,6 +100,8 @@
 </template>
 
 <script>
+import {add,del,edit,list} from '@/api/role'
+import {cloneObj} from '@/utils/index'
 export default {
   data() {
     return {
@@ -101,12 +125,17 @@ export default {
          },
          fields:{
              roleName: '',
-             roleDesc: ''
+             roleDesc: '',
+             roleState: 1,
+             roleCode: ''
          }
       },
       formRules: {
         roleName: [
           { required: true, message: '请输入角色名称', trigger: 'blur' }
+        ],
+        roleCode: [
+          { required: true, message: '请输入角色标识', trigger: 'blur' }
         ]
       }
     }
@@ -123,33 +152,39 @@ export default {
       this.form.title='新增'
       this.form.dialogVisible = true
       this.form.save = {loading:false,text:'立即保存'}
-      this.form.fields = {}
-      this.$refs.form.resetFields()
+      this.form.fields = {roleState: true}
+      //this.$refs.form.resetFields()
     },
     //编辑显示
     showEdit(index, row){
       this.form.dialogVisible = true
       this.form.title='编辑'
       this.form.save = {loading:false,text:'立即保存'}
-      this.form.fields = Object.assign({}, row)
-      this.$refs.form.resetFields()
+      let fd = JSON.parse(JSON.stringify(row))
+      fd.roleState = fd.roleState === 1 ? true : false
+      this.form.fields = Object.assign({}, fd)
+      //this.$refs.form.resetFields()
     },
     //获取数据列表
     fetchData() {
       this.listLoading = true
-      this.$api.get('/role/page',this.listQuery,response=>{
+      this.$api.request(list.method,list.url,this.listQuery,response=>{
         this.list = response.data.records
         this.listQuery.total = response.data.total
         this.listLoading = false
-      });
+      })
     },
     //提交表单
     subimtForm(){
       this.$refs.form.validate((valid) => {
 					if (valid) {
             this.form.save = {loading:true,text:'保存中'};
-            let method = this.form.fields.id ? "PUT" : "POST"
-            this.$api.request(method,'/role',this.form.fields,response =>{
+            let method = this.form.fields.id ? edit.method : add.method
+            let url = this.form.fields.id ? edit.url : add.url
+            let parmas = cloneObj(this.form.fields)
+            parmas.roleState = parmas.roleState ? 1:-1
+            delete parmas.createTime
+            this.$api.request(method,url,parmas,response =>{
               this.form.dialogVisible = false
               this.fetchData()
             },()=>{
@@ -160,7 +195,7 @@ export default {
     },
     //删除
     delRow(id) {
-      this.$api.delete('/role/'+id,{},r=>{
+      this.$api.request(del.method,del.url,{ids:id},r=>{
         this.fetchData();
         this.$message.success('删除成功!')
       })
@@ -173,7 +208,7 @@ export default {
     //批量删除
     batchRemove: function () {
       var ids = this.sels.map(item => item.id).toString();
-      this.$api.delete('/role/del/batch?ids='+ids,{},()=>{
+      this.$api.request(del.method,del.url,{ids:ids},r=>{
         this.fetchData();
         this.$message.success('删除成功!')
       })

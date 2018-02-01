@@ -77,3 +77,7 @@ export function debounce(func, wait, immediate) {
     }
   }
 }
+
+export function cloneObj(obj){
+  return JSON.parse(JSON.stringify(obj))
+}
