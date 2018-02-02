@@ -1,4 +1,5 @@
 import { Message, MessageBox } from 'element-ui'
+import store from '@/store'
 // 配置API接口地址
 var root = process.env.BASE_API
 // 引用axios
@@ -47,9 +48,20 @@ function apiAxios (method, url, params, success, failure) {
         success(res.data)
       }
     } else {
-      Message.error(res.data.message)
-      if (failure) {
-        failure(res.data)
+      if(res.data.code === 302){
+        MessageBox.alert('您的会话已过期,请重新登录系统!','提示',{
+          confirmButtonText: '确定',
+          callback: action => {
+            store.dispatch('FedLogOut').then(() => {
+              location.reload()
+            })
+          }
+        })
+      }else{
+        Message.error(res.data.message)
+        if (failure) {
+          failure(res.data)
+        }
       }
     }
   })

@@ -215,6 +215,8 @@ export default {
         this.list = response.data.records
         this.listQuery.total = response.data.total
         this.listLoading = false
+      },() => {
+        this.listLoading = false
       })
     },
     //获取所有角色
