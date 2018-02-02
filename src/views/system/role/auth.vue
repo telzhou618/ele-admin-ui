@@ -73,7 +73,7 @@ export default {
       if(node.level === 3){
         return resolve([])
       }
-      this.$api.get('/menu/getByPid', { pid: node.key,roleId:this.roleId }, response => {
+      this.$api.get('/sys/menu/getMenusByPid', { pid: node.key,roleId:this.roleId }, response => {
         return resolve(response.data)
       })
     },
@@ -83,12 +83,12 @@ export default {
     },
     //获取角色
     getRole(){
-      this.$api.get('/role/'+this.roleId, {}, response => {
+      this.$api.get('/sys/role/getById', {roleId: this.roleId}, response => {
         this.roleName = response.data.roleName
       })
     },
     getRoleAuth(){
-      this.$api.get('/role/auth', {roleId: this.roleId}, response => {
+      this.$api.get('/sys/role/getMenuIdsByRoleId', {roleId: this.roleId}, response => {
         this.roleAuth = response.data
       })
     },
@@ -96,7 +96,7 @@ export default {
     saveAuth(){
       let keys = this.$refs.tree2.getCheckedKeys();
       this.saveBtn = {loading:true,text:'保存中'};
-      this.$api.post('/role/doAuth', {roleId: this.roleId,menuIds:keys}, response => {
+      this.$api.post('/sys/role/doAuth', {roleId: this.roleId,menuIds:keys}, response => {
         this.$message.success('权限分配成功!')
         this.saveBtn = {loading:false,text:'立即保存'};
       })

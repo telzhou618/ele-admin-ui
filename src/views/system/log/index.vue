@@ -8,10 +8,9 @@
           style="width:350px;">
           <el-select v-model="listQuery.field"  slot="prepend" placeholder="请选择" style="width:120px;">
             <el-option label="用户名" value="userName"></el-option>
-            <el-option label="日志标题" value="logTitle"></el-option>
-            <el-option label="日志内容" value="logContent"></el-option>
-            <el-option label="日志参数" value="requestParams"></el-option>
-            <el-option label="请求方式" value="requestMethod"></el-option>
+            <el-option label="日志标题" value="title"></el-option>
+            <el-option label="日志参数" value="params"></el-option>
+            <el-option label="请求方式" value="method"></el-option>
           </el-select>
           <el-button slot="append" icon="el-icon-search" @click="fetchData"></el-button>
         </el-input>
@@ -21,8 +20,8 @@
     <el-table :data="list" v-loading.body="listLoading" element-loading-text="Loading"  fit highlight-current-row>
        <el-table-column type="expand">
         <template slot-scope="props">
-          <p><el-tag>URL</el-tag><span>&nbsp;{{ props.row.logUrl }}</span></p>
-          <p><el-tag>数据</el-tag><span>&nbsp;{{ props.row.requestParams }}</span></p>
+          <p><el-tag>URL</el-tag><span>&nbsp;{{ props.row.url }}</span></p>
+          <p><el-tag>数据</el-tag><span>&nbsp;{{ props.row.params }}</span></p>
         </template>
       </el-table-column>
       <el-table-column align="center" label='编号' width="95">
@@ -37,42 +36,30 @@
       </el-table-column>
       <el-table-column label="日志标题" align="center">
         <template slot-scope="scope">
-          <span>{{scope.row.logTitle}}</span>
+          <span>{{scope.row.title}}</span>
         </template>
       </el-table-column>
       <el-table-column label="日志URL" align="center" width="350">
       <template slot-scope="scope">
-        <span>{{ scope.row.logUrl ? scope.row.logUrl.substring(0,40) : ''}}</span>
+        <span>{{ scope.row.url ? scope.row.url.substring(0,40)+'...' : ''}}</span>
       </template>
-      </el-table-column>
-      <el-table-column label="日志内容" align="center">
-        <template slot-scope="scope">
-          <span>{{scope.row.logContent}}</span>
-        </template>
       </el-table-column>
       <el-table-column label="时间" align="center">
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
-          <span>{{scope.row.logTime}}</span>
+          <span>{{scope.row.createTime}}</span>
         </template>
       </el-table-column>
       <el-table-column label="IP" align="center">
         <template slot-scope="scope">
-          <span>{{scope.row.clientIp}}</span>
+          <span>{{scope.row.ip}}</span>
         </template>
       </el-table-column>
       <el-table-column label="请求方式" align="center">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.requestMethod | requestMethodFilter" size="mini">{{scope.row.requestMethod}}</el-tag>
+          <el-tag :type="scope.row.method | requestMethodFilter" size="mini">{{scope.row.method}}</el-tag>
         </template>
       </el-table-column>
-      <!--
-      <el-table-column label="其他" align="center">
-        <template slot-scope="scope">
-           <span>{{scope.row.other}}</span>
-        </template>
-      </el-table-column>
-      -->
     </el-table>
     <!--分页条-->
     <el-row>
@@ -100,8 +87,8 @@ export default {
         size:10,
         total:0,
         page:1,
-        search:'',
-        field:'logContent'
+        field:'title',
+        search:''
       }
     }
   },
@@ -122,7 +109,7 @@ export default {
     //获取数据列表
     fetchData() {
       this.listLoading = true
-      this.$api.get('/log/page',this.listQuery,response=>{
+      this.$api.get('/sys/log/list',this.listQuery,response=>{
         this.list = response.data.records
         this.listQuery.total = response.data.total
         this.listLoading = false

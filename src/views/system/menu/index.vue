@@ -4,7 +4,6 @@
     <el-row>
       <el-col :span="24" class="toolbar">
         <el-button icon="el-icon-plus" type="primary" @click="showAdd">新增</el-button>
-        <el-button icon="el-icon-close" type="danger"  :disabled="this.sels.length===0" @click="batchRemove">批量删除</el-button>
          <el-input  @keyup.enter.native="fetchData" 
           placeholder="请输入关键词" v-model="listQuery.search"
           style="width:250px;float:right;">
@@ -22,8 +21,7 @@
         <template slot-scope="scope">
           {{scope.$index}}
         </template>
-      </el-table-column>
-      
+      </el-table-column>     
       <el-table-column label="菜单名称">
         <template slot-scope="scope">
           <span v-html="scope.row.menuName"></span>
@@ -124,13 +122,6 @@
 <script>
 export default {
   data() {
-    var validatePass2 = (rule, value, callback) => {
-      if (value !== this.form.fields.password) {
-        callback(new Error('两次输入密码不一致!'));
-      } else {
-        callback();
-      }
-    };
     return {
       list: null,
       listLoading: true,
@@ -138,8 +129,8 @@ export default {
         size:10,
         total:0,
         page:1,
-        search:'',
-        field:'userName'
+        field:'menuName',
+        search:''
       },
       sels:[],//选中的列表
       form :{
@@ -161,23 +152,11 @@ export default {
          }
       },
       roles: [],
-      formRules: {
-        userName: [
-          { required: true, message: '请输入用户名称', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
-        ],
-        password2: [
-          { required: true, message: '请输入确认密码', trigger: 'blur' },
-          { validator: validatePass2, trigger: 'blur' }
-        ]
-      }
+      formRules: {}
     }
   },
   created() {
     this.fetchData()
-    this.getRoles()
   },
   methods: {
     selsChange: function (sels) {
@@ -189,45 +168,23 @@ export default {
       this.form.userNameReadOnly = false
       this.form.dialogVisible = true
       this.form.save = {loading:false,text:'立即保存'}
-      this.form.fields = {userName: '', password:'', password2:'', userStatus:1, userDesc: '', roleIds: [],userStatus:true}
-      //this.$refs.form.resetFields()
+      this.form.fields = {}
     },
     //编辑显示
     showEdit(index,item){
       this.form.dialogVisible = true
       let row =JSON.parse(JSON.stringify(item));
       this.form.title='编辑'
-      this.form.userNameReadOnly = true
       this.form.save = {loading:false,text:'立即保存'}
-      row.userStatus = item.userStatus === 1 ? true : false;
-      row.password=''
-      row.password2 =''
-      this.formRules.password=[]
-      this.formRules.password2=[]
-      let fds = {userName: '', password:'', password2:'', userStatus:1, userDesc: '', roleIds: [],userStatus:true}
-      this.form.save = {loading:true,text:'加载中'}
-      this.$api.get('/role/uid?',{userId:item.id},response=>{
-        fds.roleIds = response.data
-        this.form.fields = Object.assign(fds, row);
-        this.form.save = {loading:false,text:'立即保存'}
-      })
-     //this.$refs.form.resetFields()
     },
     //获取数据列表
     fetchData() {
       this.listLoading = true
-      this.$api.get('/menu/page',this.listQuery,response=>{
+      this.$api.get('/sys/menu/list',this.listQuery,response=>{
         this.list = response.data.records
         this.listQuery.total = response.data.total
         this.listLoading = false
       });
-    },
-    //获取所有角色
-    getRoles() {
-      this.listLoading = true
-      this.$api.get('/role',{},response=>{
-        this.roles = response.data
-      })
     },
     //提交表单
     subimtForm(){
@@ -238,14 +195,14 @@ export default {
             params.userStatus = params.userStatus?1:0
             this.form.save = {loading:true,text:'保存中'};
             if(this.form.fields.id){
-              this.$api.put('/user/edit',this.form.fields,response =>{
+              this.$api.put('/sys/menu/edit',this.form.fields,response =>{
                 this.form.dialogVisible = false
                 this.fetchData()
               },()=>{
                 this.form.save = {loading:false,text:'立即保存'}
               })
             }else{
-              this.$api.post('/user/add',this.form.fields,response =>{
+              this.$api.post('/sys/menu/add',this.form.fields,response =>{
                 this.form.dialogVisible = false
                 this.fetchData()
               },()=>{
@@ -257,7 +214,7 @@ export default {
     },
     //删除
     delRow(id) {
-      this.$api.delete('/user/'+id,{},r=>{
+      this.$api.delete('/sys/menu/delete'+id,{},r=>{
         this.fetchData();
         this.$message.success('删除成功!');
       })
@@ -266,14 +223,6 @@ export default {
     changePage(page){
       this.listQuery.page = page
       this.fetchData()
-    },
-    //批量删除
-    batchRemove: function () {
-      var ids = this.sels.map(item => item.id).toString();
-      this.$api.delete('/user/del/batch?ids='+ids,{},r=>{
-        this.fetchData();
-        this.$message.success('删除成功!');
-      })
     }
   }
 }

@@ -100,7 +100,6 @@
 </template>
 
 <script>
-import {add,del,edit,list} from '@/api/role'
 import {cloneObj} from '@/utils/index'
 export default {
   data() {
@@ -111,8 +110,8 @@ export default {
         size:10,
         total:0,
         page:1,
-        search:'',
-        field:'roleName'
+        field:'roleName',
+        search:''
       },
       sels:[],//选中的列表
       form :{
@@ -168,7 +167,7 @@ export default {
     //获取数据列表
     fetchData() {
       this.listLoading = true
-      this.$api.request(list.method,list.url,this.listQuery,response=>{
+      this.$api.get('/sys/role/list',this.listQuery,response=>{
         this.list = response.data.records
         this.listQuery.total = response.data.total
         this.listLoading = false
@@ -179,8 +178,8 @@ export default {
       this.$refs.form.validate((valid) => {
 					if (valid) {
             this.form.save = {loading:true,text:'保存中'};
-            let method = this.form.fields.id ? edit.method : add.method
-            let url = this.form.fields.id ? edit.url : add.url
+            let method = this.form.fields.id ? 'PUT' : 'POST'
+            let url = this.form.fields.id ? '/sys/role/edit' : '/sys/role/add'
             let parmas = cloneObj(this.form.fields)
             parmas.roleState = parmas.roleState ? 1:-1
             delete parmas.createTime
@@ -195,7 +194,7 @@ export default {
     },
     //删除
     delRow(id) {
-      this.$api.request(del.method,del.url,{ids:id},r=>{
+      this.$api.delete('/sys/role/delete',{ids:id},r=>{
         this.fetchData();
         this.$message.success('删除成功!')
       })
@@ -208,7 +207,7 @@ export default {
     //批量删除
     batchRemove: function () {
       var ids = this.sels.map(item => item.id).toString();
-      this.$api.request(del.method,del.url,{ids:ids},r=>{
+      this.$api.delete('/sys/role/delete',{ids:ids},r=>{
         this.fetchData();
         this.$message.success('删除成功!')
       })

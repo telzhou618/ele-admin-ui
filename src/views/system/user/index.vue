@@ -104,7 +104,7 @@
           <el-input type="textarea" v-model="form.fields.userDesc"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="subimtForm">立即保存</el-button>
+          <el-button type="primary" @click="subimtForm" :loading="form.save.loading">{{form.save.text}}</el-button>
           <el-button @click="form.dialogVisible = false">取消</el-button>
         </el-form-item>
       </el-form>
@@ -115,19 +115,10 @@
 
 <script>
 
-import { add,del,edit,list,getRoleIds } from '@/api/user'
-import { getRoleAll } from '@/api/role'
 import {cloneObj } from '@/utils/index'
 
 export default {
   data() {
-    var validatePass2 = (rule, value, callback) => {
-      if (value !== this.form.fields.password) {
-        callback(new Error('两次输入密码不一致!'));
-      } else {
-        callback();
-      }
-    };
     return {
       list: null,
       listLoading: true,
@@ -144,6 +135,10 @@ export default {
          saveLoading: false,
          title:'',
          userNameReadOnly:false,
+         save:{
+           loading:false,
+           text:'立即保存'
+         },
          fields:{
             userName: '',
             password:'',
@@ -163,7 +158,7 @@ export default {
         ],
         password2: [
           { required: true, message: '请输入确认密码', trigger: 'blur' },
-          { validator: validatePass2, trigger: 'blur' }
+          { validator: this.validatePass2, trigger: 'blur' }
         ]
       }
     }
@@ -173,6 +168,13 @@ export default {
     this.getRoles()
   },
   methods: {
+    validatePass2 (rule, value, callback)  {
+      if (value !== this.form.fields.password) {
+        callback(new Error('两次输入密码不一致!'));
+      } else {
+        callback();
+      }
+    },
     selsChange: function (sels) {
 			this.sels = sels;
 		},
@@ -181,7 +183,10 @@ export default {
       this.form.title='新增'
       this.form.userNameReadOnly = false
       this.form.dialogVisible = true
-      this.form.fields = {userName: '', password:'', password2:'', userState:1, userDesc: '', roleIds: [],userState:true}
+      this.form.fields = {roleIds: [],userState:true}
+      this.form.save = {loading:false,text:'立即保存'}
+      this.formRules.password =  { required: true, message: '请输入密码', trigger: 'blur' }
+      this.formRules.password2 = [ { required: true, message: '请输入密码', trigger: 'blur' },{ validator: this.validatePass2, trigger: 'blur' } ]
       //this.$refs.form.resetFields()
     },
     //编辑显示
@@ -190,13 +195,14 @@ export default {
       let row =JSON.parse(JSON.stringify(item));
       this.form.title='编辑'
       this.form.userNameReadOnly = true
+      this.form.save = {loading:false,text:'立即保存'}
       row.userState = item.userState === 1 ? true : false;
       row.password=''
       row.password2 =''
       this.formRules.password=[]
-      this.formRules.password2=[]
+      this.formRules.password2={ validator: this.validatePass2, trigger: 'blur' }
       let fds = {roleIds: [],userState:true}
-      this.$api.request(getRoleIds.method,getRoleIds.url,{userId: item.id},response => {
+      this.$api.get('/sys/user/getRoleIds',{userId: item.id},response => {
         fds.roleIds = response.data
         this.form.fields = Object.assign(fds, row);
       })
@@ -205,7 +211,7 @@ export default {
     //获取数据列表
     fetchData() {
       this.listLoading = true
-      this.$api.request(list.method,list.url,this.listQuery,response => {
+      this.$api.get('/sys/user/list',this.listQuery,response => {
         this.list = response.data.records
         this.listQuery.total = response.data.total
         this.listLoading = false
@@ -214,7 +220,7 @@ export default {
     //获取所有角色
     getRoles() {
       this.listLoading = true
-      this.$api.request(getRoleAll.method,getRoleAll.url,this.listQuery,response => {
+      this.$api.get('/sys/role/getRoleAll',this.listQuery,response => {
          this.roles = response.data
       })
     },
@@ -222,23 +228,32 @@ export default {
     subimtForm(){
       this.$refs.form.validate((valid) => {
 					if (valid) {
+            this.form.save = {loading:true,text:'保存中'};
             let params = cloneObj(this.form.fields)
             delete params.createTime
             params.userState = params.userState?1:0
-            
             this.form.save = {loading:true,text:'保存中'};
-            let method = this.form.fields.id ? edit.method : add.method
-            let url = this.form.fields.id? edit.url : add.url
-            this.$api.request(method,url,params,response => {
-              this.form.dialogVisible = false
-              this.fetchData()
-            })
+            if(this.form.fields.id){
+              this.$api.put('/sys/user/edit',params,response => {
+                this.form.dialogVisible = false
+                this.fetchData()
+              },()=>{
+                this.form.save = {loading:false,text:'立即保存'}
+              })
+            }else{
+              this.$api.post('/sys/user/add',params,response => {
+                this.form.dialogVisible = false
+                this.fetchData()
+              },()=>{
+                this.form.save = {loading:false,text:'立即保存'}
+              })
+            }
 					}
 				});
     },
     //删除
     delRow(id) {
-      this.$api.request(del.method,del.url,{ids:id},response => {
+      this.$api.delete('/sys/user/delete',{ids:id},response => {
         this.fetchData();
         this.$message.success('删除成功!');
       })
@@ -251,7 +266,7 @@ export default {
     //批量删除
     batchRemove: function () {
       var ids = this.sels.map(item => item.id).toString();
-      this.$api.request(del.method,del.url,{ids:ids},response => {
+      this.$api.delete('/sys/user/delete',{ids:ids},response => {
         this.fetchData();
         this.$message.success('删除成功!');
       })

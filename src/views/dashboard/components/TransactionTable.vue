@@ -20,8 +20,6 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/transaction'
-
 export default {
   data() {
     return {
@@ -42,8 +40,8 @@ export default {
   },
   methods: {
     fetchData() {
-      fetchList().then(response => {
-        this.list = response.data.records.slice(0, 5)
+      this.$api.get('/sys/user/getNewUserByNum',{num:6},response => {
+        this.list = response.data
       })
     }
   }
