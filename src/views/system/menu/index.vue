@@ -27,14 +27,14 @@
           <span v-html="scope.row.menuName"></span>
         </template>
       </el-table-column>
-      <el-table-column label="URL">
-        <template slot-scope="scope">
-          <span>{{scope.row.url}}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="编码">
         <template slot-scope="scope">
           <span>{{scope.row.code}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="URL">
+        <template slot-scope="scope">
+          <span>{{scope.row.url}}</span>
         </template>
       </el-table-column>
       <el-table-column label="图标">
@@ -68,6 +68,7 @@
           layout="prev, pager, next"
           @current-change = "changePage"
           :page-size="listQuery.size"
+          :show-all-levels="false"
           :total="listQuery.total" style="float:right">
         </el-pagination>
       </el-col>
@@ -75,39 +76,36 @@
 
     <!--弹出窗口-->
     <el-dialog
-      :title="form.title+'-用户'"
+      :title="form.title+'-菜单'"
       :visible.sync="form.dialogVisible"
       width="40%">
       <el-form ref="form" :model="form.fields" label-width="80px" :rules="formRules" status-icon >
-        <el-form-item label="用户名" prop="userName">
-          <el-input v-model="form.fields.userName" :readonly="form.userNameReadOnly"></el-input>
+        <el-form-item label="父级菜单" prop="pid">
+          <el-cascader
+            placeholder="请选择父级菜单"
+            :options="form.menuList"
+            :props="form.menuProps"
+            change-on-select
+            v-model="form.selectedOptions">
+          </el-cascader>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="form.fields.password" type="password"></el-input>
+        <el-form-item label="菜单名称" prop="menuName">
+          <el-input v-model="form.fields.menuName" type="text"></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" prop="password2">
-          <el-input v-model="form.fields.password2" type="password"></el-input>
+        <el-form-item label="菜单编码" prop="code">
+          <el-input v-model="form.fields.code" placeholder="0010"></el-input>
         </el-form-item>
-        <el-form-item label="角色" prop="roleIds">
-          <el-select
-            v-model="form.fields.roleIds"
-            multiple
-            filterable
-            default-first-option
-            placeholder="选择角色">
-            <el-option
-              v-for="item in roles"
-              :key="item.id"
-              :label="item.roleName"
-              :value="item.id">
-            </el-option>
-          </el-select>
+        <el-form-item label="菜单URL" prop="url">
+          <el-input v-model="form.fields.url" placeholder="http://www.example.com"></el-input>
         </el-form-item>
-        <el-form-item label="状态">
-          <el-switch v-model="form.fields.userStatus"></el-switch>
+        <el-form-item label="菜单图标" prop="icon">
+          <el-input v-model="form.fields.icon"></el-input>
         </el-form-item>
-        <el-form-item label="用户描述">
-          <el-input type="textarea" v-model="form.fields.userDesc"></el-input>
+        <el-form-item label="菜单排序" prop="sort" >
+          <el-input v-model="form.fields.sort" type="number" placeholder="0"></el-input>
+        </el-form-item>
+        <el-form-item label="菜单权限" prop="resource">
+          <el-input v-model="form.fields.resource"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="subimtForm" :loading="form.save.loading">{{form.save.text}}</el-button>
@@ -137,26 +135,38 @@ export default {
          dialogVisible: false,
          saveLoading: false,
          title:'',
-         userNameReadOnly:false,
          save:{
            loading:false,
            text:'立即保存'
          },
+         menuProps:{
+           value: 'id',
+           label: 'menuName',
+           children: 'children'
+         },
+         menuList: [],
+         selectedOptions: [],
          fields:{
-            userName: '',
-            password:'',
-            password2:'',
-            userStatus:1,
-            userDesc: '',
-            roleIds: []
+          pid: '',
+          menuName: '',
+          url: '',
+          icon: '',
+          sort: 1,
+          code: '',
+          deep: '',
+          resource: []
          }
       },
-      roles: [],
-      formRules: {}
+      formRules: {
+        pid:{required: true, message: '请输选择父级菜单', trigger: 'blur' },
+        menuName:{required: true, message: '请输入菜单名称', trigger: 'blur' },
+        code:{required: true, message: '请输入菜单编码', trigger: 'blur' }
+      }
     }
   },
   created() {
     this.fetchData()
+    this.fetchMenuTree()
   },
   methods: {
     selsChange: function (sels) {
@@ -168,7 +178,6 @@ export default {
       this.form.userNameReadOnly = false
       this.form.dialogVisible = true
       this.form.save = {loading:false,text:'立即保存'}
-      this.form.fields = {}
     },
     //编辑显示
     showEdit(index,item){
@@ -176,6 +185,7 @@ export default {
       let row =JSON.parse(JSON.stringify(item));
       this.form.title='编辑'
       this.form.save = {loading:false,text:'立即保存'}
+      this.form.fields = Object.assign({}, row)
     },
     //获取数据列表
     fetchData() {
@@ -184,6 +194,11 @@ export default {
         this.list = response.data.records
         this.listQuery.total = response.data.total
         this.listLoading = false
+      });
+    },
+    fetchMenuTree(){
+      this.$api.get('/sys/menu/tree',{},response=>{
+        this.form.menuList = response.data
       });
     },
     //提交表单
@@ -214,7 +229,7 @@ export default {
     },
     //删除
     delRow(id) {
-      this.$api.delete('/sys/menu/delete'+id,{},r=>{
+      this.$api.delete('/sys/menu/delete',{ids:id},r=>{
         this.fetchData();
         this.$message.success('删除成功!');
       })
