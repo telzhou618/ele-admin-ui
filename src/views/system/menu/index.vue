@@ -80,13 +80,14 @@
       :visible.sync="form.dialogVisible"
       width="40%">
       <el-form ref="form" :model="form.fields" label-width="80px" :rules="formRules" status-icon >
-        <el-form-item label="父级菜单" prop="pid">
+        <el-form-item label="父级菜单" prop="pids">
           <el-cascader
+          clearable
             placeholder="请选择父级菜单"
             :options="form.menuList"
             :props="form.menuProps"
             change-on-select
-            v-model="form.selectedOptions">
+            v-model="form.fields.pids">
           </el-cascader>
         </el-form-item>
         <el-form-item label="菜单名称" prop="menuName">
@@ -140,25 +141,23 @@ export default {
            text:'立即保存'
          },
          menuProps:{
-           value: 'id',
-           label: 'menuName',
-           children: 'children'
+          value: 'id',
+          label: 'menuName',
+          children: 'children'
          },
          menuList: [],
-         selectedOptions: [],
          fields:{
-          pid: '',
+          pids: [],
           menuName: '',
           url: '',
           icon: '',
           sort: 1,
           code: '',
           deep: '',
-          resource: []
+          resource: ''
          }
       },
       formRules: {
-        pid:{required: true, message: '请输选择父级菜单', trigger: 'blur' },
         menuName:{required: true, message: '请输入菜单名称', trigger: 'blur' },
         code:{required: true, message: '请输入菜单编码', trigger: 'blur' }
       }
@@ -203,6 +202,7 @@ export default {
     },
     //提交表单
     subimtForm(){
+      console.log(this.form.pid)
       this.$refs.form.validate((valid) => {
 					if (valid) {
             let params = this.form.fields;
