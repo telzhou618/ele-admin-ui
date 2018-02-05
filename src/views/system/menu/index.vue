@@ -24,7 +24,7 @@
       </el-table-column>     
       <el-table-column label="菜单名称">
         <template slot-scope="scope">
-          <span v-html="scope.row.menuName"></span>
+          <span v-html="formatMenuName(scope.row)"></span>
         </template>
       </el-table-column>
       <el-table-column label="编码">
@@ -91,7 +91,7 @@
           </el-cascader>
         </el-form-item>
         <el-form-item label="菜单名称" prop="menuName">
-          <el-input v-model="form.fields.menuName" type="text"></el-input>
+          <el-input v-model="form.fields.menuName" type="text" ></el-input>
         </el-form-item>
         <el-form-item label="菜单编码" prop="code">
           <el-input v-model="form.fields.code" placeholder="0010"></el-input>
@@ -114,7 +114,6 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-
   </div>
 </template>
 
@@ -151,7 +150,7 @@ export default {
           menuName: '',
           url: '',
           icon: '',
-          sort: 1,
+          sort: 0,
           code: '',
           deep: '',
           resource: ''
@@ -168,12 +167,20 @@ export default {
     this.fetchMenuTree()
   },
   methods: {
-    selsChange: function (sels) {
-			this.sels = sels;
+    formatMenuName: function(row){
+      let menuName ="┠" + row.menuName
+      for(var i=0;i< row.deep;i++){
+        menuName = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + menuName
+      }
+      return menuName
+    },
+    selsChange (sels) {
+			this.sels = sels
 		},
     //新增显示
     showAdd(){
       this.form.title='新增'
+      this.form.fields = {sort:0}
       this.form.userNameReadOnly = false
       this.form.dialogVisible = true
       this.form.save = {loading:false,text:'立即保存'}
@@ -185,6 +192,9 @@ export default {
       this.form.title='编辑'
       this.form.save = {loading:false,text:'立即保存'}
       this.form.fields = Object.assign({}, row)
+      this.$api.get('/sys/menu/getPidsByPid',{pid: item.pid},response => {
+        this.form.fields.pids = response.data
+      }) 
     },
     //获取数据列表
     fetchData() {
