@@ -6,7 +6,12 @@
         <el-button icon="el-icon-plus" type="primary" @click="showAdd">新增根菜单</el-button>
          <el-input  @keyup.enter.native="fetchData" 
           placeholder="请输入关键词" v-model="listQuery.search"
-          style="width:250px;float:right;">
+          style="width:350px;float:right;">
+          <el-select v-model="listQuery.field"  slot="prepend" placeholder="请选择" style="width:120px;">
+            <el-option label="菜单名称" value="menuName"></el-option>
+            <el-option label="编码" value="code"></el-option>
+            <el-option label="权限" value="resource"></el-option>
+          </el-select>
            <el-button slot="append" icon="el-icon-search" @click="fetchData"></el-button>
         </el-input>
       </el-col>
@@ -54,7 +59,7 @@
       </el-table-column>
       <el-table-column align="center"  width="350" label="操作">
         <template slot-scope="scope">
-         <el-button icon="el-icon-plus" type="primary" @click="showAddItem(scope.$index, scope.row)" size="mini">添加子菜单</el-button>
+         <el-button icon="el-icon-plus" type="primary" @click="showAddItem(scope.$index, scope.row)" size="mini">新增子菜单</el-button>
          <el-button icon="el-icon-edit" type="success" @click="showEdit(scope.$index, scope.row)" size="mini">编辑</el-button>
          <el-button icon="el-icon-close" type="danger" size="mini" @click="delRow(scope.row.id)">删除</el-button>
         </template>
