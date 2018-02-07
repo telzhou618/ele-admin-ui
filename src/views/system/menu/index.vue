@@ -3,7 +3,7 @@
     <!--导航-->
     <el-row>
       <el-col :span="24" class="toolbar">
-        <el-button icon="el-icon-plus" type="primary" @click="showAdd">新增</el-button>
+        <el-button icon="el-icon-plus" type="primary" @click="showAdd">新增根菜单</el-button>
          <el-input  @keyup.enter.native="fetchData" 
           placeholder="请输入关键词" v-model="listQuery.search"
           style="width:250px;float:right;">
@@ -52,8 +52,9 @@
           <span>{{scope.row.resource}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center"  width="200" label="操作">
+      <el-table-column align="center"  width="350" label="操作">
         <template slot-scope="scope">
+         <el-button icon="el-icon-plus" type="primary" @click="showAddItem(scope.$index, scope.row)" size="mini">添加子菜单</el-button>
          <el-button icon="el-icon-edit" type="success" @click="showEdit(scope.$index, scope.row)" size="mini">编辑</el-button>
          <el-button icon="el-icon-close" type="danger" size="mini" @click="delRow(scope.row.id)">删除</el-button>
         </template>
@@ -76,25 +77,18 @@
 
     <!--弹出窗口-->
     <el-dialog
-      :title="form.title+'-菜单'"
+      :title="form.title"
       :visible.sync="form.dialogVisible"
       width="40%">
       <el-form ref="form" :model="form.fields" label-width="80px" :rules="formRules" status-icon >
-        <el-form-item label="父级菜单" prop="pids">
-          <el-cascader
-          clearable
-            placeholder="请选择父级菜单"
-            :options="form.menuList"
-            :props="form.menuProps"
-            change-on-select
-            v-model="form.fields.pids">
-          </el-cascader>
+        <el-form-item label="父级菜单Id" prop="pid">
+            <el-input v-model="form.fields.pid" readonly ></el-input>
+        </el-form-item>
+         <el-form-item label="菜单编码" prop="code">
+          <el-input v-model="form.fields.code" placeholder="0010"></el-input>
         </el-form-item>
         <el-form-item label="菜单名称" prop="menuName">
-          <el-input v-model="form.fields.menuName" type="text" ></el-input>
-        </el-form-item>
-        <el-form-item label="菜单编码" prop="code">
-          <el-input v-model="form.fields.code" placeholder="0010"></el-input>
+          <el-input v-model="form.fields.menuName" placeholder="请输入菜单名称"></el-input>
         </el-form-item>
         <el-form-item label="菜单URL" prop="url">
           <el-input v-model="form.fields.url" placeholder="http://www.example.com"></el-input>
@@ -123,132 +117,144 @@ export default {
     return {
       list: null,
       listLoading: true,
-      listQuery:{
-        size:10,
-        total:0,
-        page:1,
-        field:'menuName',
-        search:''
+      listQuery: {
+        size: 10,
+        total: 0,
+        page: 1,
+        field: "menuName",
+        search: ""
       },
-      sels:[],//选中的列表
-      form :{
-         dialogVisible: false,
-         saveLoading: false,
-         title:'',
-         save:{
-           loading:false,
-           text:'立即保存'
-         },
-         menuProps:{
-          value: 'id',
-          label: 'menuName',
-          children: 'children'
-         },
-         menuList: [],
-         fields:{
-          pids: [],
-          menuName: '',
-          url: '',
-          icon: '',
+      sels: [], //选中的列表
+      form: {
+        dialogVisible: false,
+        saveLoading: false,
+        title: "",
+        save: {
+          loading: false,
+          text: "立即保存"
+        },
+        menuProps: {
+          value: "id",
+          label: "menuName",
+          children: "children"
+        },
+        menuList: [],
+        fields: {
+          pid: "0",
+          menuName: "",
+          url: "",
+          icon: "",
           sort: 0,
-          code: '',
-          deep: '',
-          resource: ''
-         }
+          code: "",
+          deep: 1,
+          resource: ""
+        }
       },
       formRules: {
-        menuName:{required: true, message: '请输入菜单名称', trigger: 'blur' },
-        code:{required: true, message: '请输入菜单编码', trigger: 'blur' }
+        menuName: {
+          required: true,
+          message: "请输入菜单名称",
+          trigger: "blur"
+        },
+        code: { required: true, message: "请输入菜单编码", trigger: "blur" }
       }
-    }
+    };
   },
   created() {
-    this.fetchData()
-    this.fetchMenuTree()
+    this.fetchData();
   },
   methods: {
-    formatMenuName: function(row){
-      let menuName ="┠" + row.menuName
-      for(var i=0;i< row.deep;i++){
-        menuName = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + menuName
+    formatMenuName: function(row) {
+      let menuName = "┠" + row.menuName;
+      for (var i = 0; i < row.deep; i++) {
+        menuName = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + menuName;
       }
-      return menuName
+      return menuName;
     },
-    selsChange (sels) {
-			this.sels = sels
-		},
+    selsChange(sels) {
+      this.sels = sels;
+    },
     //新增显示
-    showAdd(){
-      this.form.title='新增'
-      this.form.fields = {sort:0}
-      this.form.userNameReadOnly = false
-      this.form.dialogVisible = true
-      this.form.save = {loading:false,text:'立即保存'}
+    showAdd() {
+      this.form.title = "新增根菜单";
+      this.form.fields = { sort: 0, pid: "0", deep: 1 };
+      this.form.userNameReadOnly = false;
+      this.form.dialogVisible = true;
+      this.form.save = { loading: false, text: "立即保存" };
+    },
+    showAddItem(index, item) {
+      this.form.title = "新增子菜单";
+      this.form.fields = { sort: 0, pid: item.id, deep: item.deep + 1 };
+      this.form.userNameReadOnly = false;
+      this.form.dialogVisible = true;
+      this.form.save = { loading: false, text: "立即保存" };
     },
     //编辑显示
-    showEdit(index,item){
-      this.form.dialogVisible = true
-      let row =JSON.parse(JSON.stringify(item));
-      this.form.title='编辑'
-      this.form.save = {loading:false,text:'立即保存'}
-      this.form.fields = Object.assign({}, row)
-      this.$api.get('/sys/menu/getPidsByPid',{pid: item.pid},response => {
-        this.form.fields.pids = response.data
-      }) 
+    showEdit(index, item) {
+      this.form.dialogVisible = true;
+      let row = JSON.parse(JSON.stringify(item));
+      this.form.title = "编辑菜单";
+      this.form.save = { loading: false, text: "立即保存" };
+      this.form.fields = Object.assign({}, row);
     },
     //获取数据列表
     fetchData() {
-      this.listLoading = true
-      this.$api.get('/sys/menu/list',this.listQuery,response=>{
-        this.list = response.data.records
-        this.listQuery.total = response.data.total
-        this.listLoading = false
-      });
-    },
-    fetchMenuTree(){
-      this.$api.get('/sys/menu/tree',{},response=>{
-        this.form.menuList = response.data
+      this.listLoading = true;
+      this.$api.get("/sys/menu/list", this.listQuery, response => {
+        this.list = response.data.records;
+        this.listQuery.total = response.data.total;
+        this.listLoading = false;
       });
     },
     //提交表单
-    subimtForm(){
-      console.log(this.form.pid)
-      this.$refs.form.validate((valid) => {
-					if (valid) {
-            let params = this.form.fields;
-            delete params.createTime
-            params.userStatus = params.userStatus?1:0
-            this.form.save = {loading:true,text:'保存中'};
-            if(this.form.fields.id){
-              this.$api.put('/sys/menu/edit',this.form.fields,response =>{
-                this.form.dialogVisible = false
-                this.fetchData()
-              },()=>{
-                this.form.save = {loading:false,text:'立即保存'}
-              })
-            }else{
-              this.$api.post('/sys/menu/add',this.form.fields,response =>{
-                this.form.dialogVisible = false
-                this.fetchData()
-              },()=>{
-                this.form.save = {loading:false,text:'立即保存'}
-              })
-            }
-					}
-				});
+    subimtForm() {
+      console.log(this.form.pid);
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          let params = this.form.fields;
+          delete params.createTime;
+          params.userStatus = params.userStatus ? 1 : 0;
+          this.form.save = { loading: true, text: "保存中" };
+          if (this.form.fields.id) {
+            this.$api.put(
+              "/sys/menu/edit",
+              this.form.fields,
+              response => {
+                this.form.dialogVisible = false;
+                this.fetchData();
+              },
+              () => {
+                this.form.save = { loading: false, text: "立即保存" };
+              }
+            );
+          } else {
+            this.$api.post(
+              "/sys/menu/add",
+              this.form.fields,
+              response => {
+                this.form.dialogVisible = false;
+                this.fetchData();
+              },
+              () => {
+                this.form.save = { loading: false, text: "立即保存" };
+              }
+            );
+          }
+        }
+      });
     },
     //删除
     delRow(id) {
-      this.$api.delete('/sys/menu/delete',{ids:id},r=>{
+      this.$api.delete("/sys/menu/delete", { ids: id }, r => {
         this.fetchData();
-        this.$message.success('删除成功!');
-      })
+        this.$message.success("删除成功!");
+      });
     },
     //分页查询
-    changePage(page){
-      this.listQuery.page = page
-      this.fetchData()
+    changePage(page) {
+      this.listQuery.page = page;
+      this.fetchData();
     }
   }
-}
+};
 </script>
