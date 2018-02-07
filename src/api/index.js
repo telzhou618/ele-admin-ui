@@ -100,13 +100,7 @@ export default {
   //请求
   request: function (method,url, params, success, failure) {
     if(method  === 'delete' || method === 'DELETE'){
-      MessageBox.confirm('此操作将永久删除选择的记录, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        return apiAxios('DELETE', url, params, success, failure)
-      });
+      return delete(url, params, success, failure)
     }else{
       return apiAxios(method, url, params, success, failure)
     }
