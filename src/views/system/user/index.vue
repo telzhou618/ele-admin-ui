@@ -13,7 +13,7 @@
       </el-col>
     </el-row>
     <!--数据-->
-    <el-table :data="list" v-loading.body="listLoading" @selection-change="selsChange" element-loading-text="Loading"  fit highlight-current-row>
+    <el-table border :height="tableHeight" :data="list" v-loading.body="listLoading" @selection-change="selsChange" element-loading-text="Loading"  fit highlight-current-row>
       <el-table-column
         type="selection"
         width="30">
@@ -120,6 +120,7 @@ import {cloneObj } from '@/utils/index'
 export default {
   data() {
     return {
+      tableHeight:window.innerHeight - 220,
       list: null,
       listLoading: true,
       listQuery:{

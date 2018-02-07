@@ -17,14 +17,14 @@
       </el-col>
     </el-row>
     <!--数据-->
-    <el-table :data="list" v-loading.body="listLoading" element-loading-text="Loading"  fit highlight-current-row>
+    <el-table border :height="tableHeight" :data="list" v-loading.body="listLoading" element-loading-text="Loading"  fit highlight-current-row>
        <el-table-column type="expand">
         <template slot-scope="props">
           <p><el-tag>URL</el-tag><span>&nbsp;{{ props.row.url }}</span></p>
           <p><el-tag>数据</el-tag><span>&nbsp;{{ props.row.params }}</span></p>
         </template>
       </el-table-column>
-      <el-table-column align="center" label='编号' width="95">
+      <el-table-column align="center" label='编号' width="95" >
         <template slot-scope="scope">
           {{scope.$index}}
         </template>
@@ -39,9 +39,9 @@
           <span>{{scope.row.title}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="日志URL" align="center" width="350">
+      <el-table-column label="日志URL" align="center" width="350" show-overflow-tooltip>
       <template slot-scope="scope">
-        <span>{{ scope.row.url ? scope.row.url.substring(0,40)+'...' : ''}}</span>
+        <span>{{ scope.row.url }}</span>
       </template>
       </el-table-column>
       <el-table-column label="时间" align="center">
@@ -81,10 +81,11 @@
 export default {
   data() {
     return {
+      tableHeight:window.innerHeight - 220,
       list: null,
       listLoading: true,
       listQuery:{
-        size:10,
+        size:12,
         total:0,
         page:1,
         field:'title',
