@@ -59,9 +59,9 @@
       </el-table-column>
       <el-table-column align="center"  width="350" label="操作">
         <template slot-scope="scope">
-         <el-button icon="el-icon-plus" type="primary" @click="showAddItem(scope.$index, scope.row)" size="mini">新增子菜单</el-button>
-         <el-button icon="el-icon-edit" type="success" @click="showEdit(scope.$index, scope.row)" size="mini">编辑</el-button>
-         <el-button icon="el-icon-close" type="danger" size="mini" @click="delRow(scope.row.id)">删除</el-button>
+         <el-button icon="el-icon-plus" type="primary" plain @click="showAddItem(scope.$index, scope.row)" size="mini">新增子菜单</el-button>
+         <el-button icon="el-icon-edit" type="success" plain @click="showEdit(scope.$index, scope.row)" size="mini">编辑</el-button>
+         <el-button icon="el-icon-close" type="danger" plain size="mini" @click="delRow(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

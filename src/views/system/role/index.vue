@@ -4,7 +4,9 @@
     <el-row>
       <el-col :span="24" class="toolbar">
         <el-button icon="el-icon-plus" type="primary" @click="showAdd">新增</el-button>
-        <el-button icon="el-icon-close" type="danger" :disabled="this.sels.length===0" @click="batchRemove">批量删除</el-button>
+        <!--
+          <el-button icon="el-icon-close" type="danger" :disabled="this.sels.length===0" @click="batchRemove">批量删除</el-button>
+        -->
          <el-input  @keyup.enter.native="fetchData" 
           placeholder="请输入关键词" v-model="listQuery.search"
           style="width:250px;float:right;">
@@ -39,12 +41,12 @@
           <span>{{scope.row.roleDesc}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" >
+      <el-table-column label="创建时间" align="center">
         <template slot-scope="scope">
           <span>{{scope.row.createTime}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" >
+      <el-table-column label="状态" align="center">
         <template slot-scope="scope">
           <el-tag type="success" v-if="scope.row.roleState === 1">启用</el-tag>
           <el-tag type="danger" v-else>禁用</el-tag>
@@ -52,9 +54,9 @@
       </el-table-column>
       <el-table-column align="center"  width="300" label="操作">
         <template slot-scope="scope">
-         <el-button icon="el-icon-setting" type="primary" size="mini" @click="toAuth(scope.row.id)">权限</el-button>
-         <el-button icon="el-icon-edit" type="success" @click="showEdit(scope.$index, scope.row)" size="mini">编辑</el-button>
-         <el-button icon="el-icon-close" type="danger" size="mini" @click="delRow(scope.row.id)">删除</el-button>
+         <el-button icon="el-icon-setting" type="primary" plain size="mini" @click="toAuth(scope.row.id)">权限</el-button>
+         <el-button icon="el-icon-edit" type="success" plain @click="showEdit(scope.$index, scope.row)" size="mini">编辑</el-button>
+         <el-button icon="el-icon-close" type="danger" plain size="mini" @click="delRow(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

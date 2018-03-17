@@ -4,7 +4,9 @@
     <el-row>
       <el-col :span="24" class="toolbar">
         <el-button icon="el-icon-plus" type="primary" @click="showAdd">新增</el-button>
-        <el-button icon="el-icon-close" type="danger"  :disabled="this.sels.length===0" @click="batchRemove">批量删除</el-button>
+        <!--
+          <el-button icon="el-icon-close" type="danger"  :disabled="this.sels.length===0" @click="batchRemove">批量删除</el-button>
+        -->
          <el-input  @keyup.enter.native="fetchData" 
           placeholder="请输入关键词" v-model="listQuery.search"
           style="width:250px;float:right;">
@@ -48,8 +50,8 @@
       </el-table-column>
       <el-table-column align="center"  width="200" label="操作">
         <template slot-scope="scope">
-         <el-button icon="el-icon-edit" type="success" @click="showEdit(scope.$index, scope.row)" size="mini">编辑</el-button>
-         <el-button icon="el-icon-close" type="danger" size="mini" @click="delRow(scope.row.id)">删除</el-button>
+         <el-button icon="el-icon-edit" type="success" plain @click="showEdit(scope.$index, scope.row)" size="mini">编辑</el-button>
+         <el-button icon="el-icon-close" type="danger" plain size="mini" @click="delRow(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

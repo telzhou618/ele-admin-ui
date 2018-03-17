@@ -2,7 +2,8 @@
   <scroll-bar>
     <h2 class="logo-title" v-if="isCollapse==false"><router-link to="/dashboard">Admin</router-link></h2>
     <h2 class="logo-title" v-else><router-link to="/dashboard">A</router-link></h2>
-    <el-menu mode="vertical" unique-opened :default-active="$route.path" :collapse="isCollapse" background-color="#304156" text-color="#fff" active-text-color="#409EFF">
+    <el-menu mode="vertical" unique-opened :default-active="$route.path" :collapse="isCollapse" 
+      background-color="#304156" text-color="#fff" active-text-color="#409EFF" >
       <sidebar-item :routes="routes"></sidebar-item>
     </el-menu>
   </scroll-bar>
