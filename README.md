@@ -1,11 +1,12 @@
 # ele-admin-ui
+### JAVA接口项目
+https://github.com/litzhou/ele-admin-api
 
-## Build Setup
-
+### 运行
 ``` bash
 
 # Clone project
-git clone https://github.com/PanJiaChen/vueAdmin-template.git
+git clone https://github.com/litzhou/ele-admin-ui.git
 
 # Install dependencies
 npm install
@@ -22,3 +23,6 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
+### 预览
+![image](https://github.com/litzhou/ele-admin-ui/blob/master/imgs/f0.png)
+![image](https://github.com/litzhou/ele-admin-ui/blob/master/imgs/f1.png)
