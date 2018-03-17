@@ -1,36 +1,34 @@
 <template>
   <div class="app-container">
-    <el-row>
-      <el-col :span="24" class="toolbar">
-        <el-button icon="el-icon-arrow-left" type="primary" @click="gotoRole">返回</el-button>
+    <el-card>
+       <el-button icon="el-icon-arrow-left" type="primary" @click="gotoRole">返回</el-button>
         <el-input  @keyup.enter.native="fetchData"
            placeholder="请输入关键词" v-model="filterText" suffix-icon="el-icon-search"
            style="width:250px;">
         </el-input>
-      </el-col>
-    </el-row>
+    </el-card>
     <el-row style="margin:10px 0;">
       <el-col :span="24" class="toolbar">
-        <span style="color:#606266">您正在给角色 <el-tag type="primary">{{roleName}}</el-tag> 分配权限,选择想要分配的权限后保存！</span>
+        <span style="background-color: #fdf6ec;color:#e6a23c">您正在给角色 <el-tag type="primary">{{roleName}}</el-tag> 分配权限,选择想要分配的权限后保存！</span>
       </el-col>
     </el-row>
-    <el-tree class="filter-tree"
-       :props="defaultProps"
-       lazy
-       :load="loadNode"
-       show-checkbox
-       node-key="id"
-       :filter-node-method="filterNode"
-       :default-checked-keys="roleAuth"
-       default-expand-all
-       ref="tree2">
-    </el-tree>
-    <el-row>
-      <el-col :span="24" class="toolbar">
-        <el-button type="primary" @click="saveAuth" :loading="saveBtn.loading">{{saveBtn.text}}</el-button>
-        <el-button  @click="gotoRole">返回</el-button>
-      </el-col>
-    </el-row>
+    <el-card>
+      <el-tree class="filter-tree"
+        :props="defaultProps"
+        lazy
+        :load="loadNode"
+        show-checkbox
+        node-key="id"
+        :filter-node-method="filterNode"
+        :default-checked-keys="roleAuth"
+        default-expand-all
+        ref="tree2">
+      </el-tree>
+    </el-card>
+    <el-card>
+      <el-button type="primary" @click="saveAuth" :loading="saveBtn.loading">{{saveBtn.text}}</el-button>
+      <el-button  @click="gotoRole">返回</el-button>
+    </el-card>
   </div>
 </template>
 

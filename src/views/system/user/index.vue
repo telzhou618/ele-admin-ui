@@ -1,21 +1,20 @@
 <template>
   <div class="app-container">
     <!--导航-->
-    <el-row>
-      <el-col :span="24" class="toolbar">
-        <el-button icon="el-icon-plus" type="primary" @click="showAdd">新增</el-button>
-        <!--
-          <el-button icon="el-icon-close" type="danger"  :disabled="this.sels.length===0" @click="batchRemove">批量删除</el-button>
-        -->
-         <el-input  @keyup.enter.native="fetchData" 
-          placeholder="请输入关键词" v-model="listQuery.search"
-          style="width:250px;float:right;">
-           <el-button slot="append" icon="el-icon-search" @click="fetchData"></el-button>
-        </el-input>
-      </el-col>
-    </el-row>
+    <el-card>
+    <el-button icon="el-icon-plus" type="primary" @click="showAdd">新增</el-button>
+      <!--
+        <el-button icon="el-icon-close" type="danger"  :disabled="this.sels.length===0" @click="batchRemove">批量删除</el-button>
+      -->
+        <el-input  @keyup.enter.native="fetchData" 
+        placeholder="请输入关键词" v-model="listQuery.search"
+        style="width:250px;float:right;">
+          <el-button slot="append" icon="el-icon-search" @click="fetchData"></el-button>
+      </el-input>
+   </el-card>
     <!--数据-->
-    <el-table border :height="tableHeight" :data="list" v-loading.body="listLoading" @selection-change="selsChange" element-loading-text="Loading"  fit highlight-current-row>
+    <el-card>
+    <el-table  :data="list" v-loading.body="listLoading" @selection-change="selsChange" element-loading-text="Loading"  fit highlight-current-row>
       <el-table-column
         type="selection"
         width="30">
@@ -56,9 +55,9 @@
       </el-table-column>
     </el-table>
     <!--分页条-->
-    <el-row>
-      <el-col :span="24" class="toolbar">
-        <span class="" style="line-height:35px;color:#666;">每页显示{{listQuery.size}}条 共{{listQuery.total}}条</span>
+    </el-card>
+    <el-card>
+      <span class="" style="line-height:30px;color:#666;">每页显示{{listQuery.size}}条 共{{listQuery.total}}条</span>
         <el-pagination
           background
           layout="prev, pager, next"
@@ -66,8 +65,7 @@
           :page-size="listQuery.size"
           :total="listQuery.total" style="float:right">
         </el-pagination>
-      </el-col>
-    </el-row>
+    </el-card>
 
     <!--弹出窗口-->
     <el-dialog
@@ -122,7 +120,6 @@ import {cloneObj } from '@/utils/index'
 export default {
   data() {
     return {
-      tableHeight:window.innerHeight - 220,
       list: null,
       listLoading: true,
       listQuery:{

@@ -15,5 +15,11 @@ export default {
   background: #f4f4f5;
   border-left:3px solid #409EFF;
 }
+.el-card__body{
+  padding: 10px;
+}
+.el-card{
+  margin-bottom: 5px; 
+}
 </style>
 

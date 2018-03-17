@@ -1,9 +1,8 @@
 <template>
   <div class="app-container">
     <!--导航-->
-    <el-row>
-      <el-col :span="24" class="toolbar">
-        <el-button icon="el-icon-plus" type="primary" @click="showAdd">新增根菜单</el-button>
+    <el-card>
+      <el-button icon="el-icon-plus" type="primary" @click="showAdd">新增根菜单</el-button>
          <el-input  @keyup.enter.native="fetchData" 
           placeholder="请输入关键词" v-model="listQuery.search"
           style="width:350px;float:right;">
@@ -14,61 +13,61 @@
           </el-select>
            <el-button slot="append" icon="el-icon-search" @click="fetchData"></el-button>
         </el-input>
-      </el-col>
-    </el-row>
+    </el-card>
     <!--数据-->
-    <el-table border :height="tableHeight" :data="list" v-loading.body="listLoading" @selection-change="selsChange" element-loading-text="Loading"  fit highlight-current-row>
-      <el-table-column
-        type="selection"
-        width="30">
-      </el-table-column>
-      <el-table-column align="center" label='编号' width="95">
-        <template slot-scope="scope">
-          {{scope.$index}}
-        </template>
-      </el-table-column>     
-      <el-table-column label="菜单名称">
-        <template slot-scope="scope">
-          <span v-html="formatMenuName(scope.row)"></span>
-        </template>
-      </el-table-column>
-      <el-table-column label="编码">
-        <template slot-scope="scope">
-          <span>{{scope.row.code}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="URL">
-        <template slot-scope="scope">
-          <span>{{scope.row.url}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="图标">
-        <template slot-scope="scope">
-          <span>{{scope.row.icon}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="排序">
-        <template slot-scope="scope">
-          <span>{{scope.row.sort}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="权限">
-        <template slot-scope="scope">
-          <span>{{scope.row.resource}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center"  width="350" label="操作">
-        <template slot-scope="scope">
-         <el-button icon="el-icon-plus" type="primary" plain @click="showAddItem(scope.$index, scope.row)" size="mini">新增子菜单</el-button>
-         <el-button icon="el-icon-edit" type="success" plain @click="showEdit(scope.$index, scope.row)" size="mini">编辑</el-button>
-         <el-button icon="el-icon-close" type="danger" plain size="mini" @click="delRow(scope.row.id)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <el-card>
+      <el-table border :data="list" v-loading.body="listLoading" @selection-change="selsChange" element-loading-text="Loading"  fit highlight-current-row>
+        <el-table-column
+          type="selection"
+          width="30">
+        </el-table-column>
+        <el-table-column align="center" label='编号' width="95">
+          <template slot-scope="scope">
+            {{scope.$index}}
+          </template>
+        </el-table-column>     
+        <el-table-column label="菜单名称">
+          <template slot-scope="scope">
+            <span v-html="formatMenuName(scope.row)"></span>
+          </template>
+        </el-table-column>
+        <el-table-column label="编码">
+          <template slot-scope="scope">
+            <span>{{scope.row.code}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="URL">
+          <template slot-scope="scope">
+            <span>{{scope.row.url}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="图标">
+          <template slot-scope="scope">
+            <span>{{scope.row.icon}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="排序">
+          <template slot-scope="scope">
+            <span>{{scope.row.sort}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="权限">
+          <template slot-scope="scope">
+            <span>{{scope.row.resource}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center"  width="350" label="操作">
+          <template slot-scope="scope">
+          <el-button icon="el-icon-plus" type="primary" plain @click="showAddItem(scope.$index, scope.row)" size="mini">新增子菜单</el-button>
+          <el-button icon="el-icon-edit" type="success" plain @click="showEdit(scope.$index, scope.row)" size="mini">编辑</el-button>
+          <el-button icon="el-icon-close" type="danger" plain size="mini" @click="delRow(scope.row.id)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
     <!--分页条-->
-    <el-row>
-      <el-col :span="24" class="toolbar">
-        <span class="" style="line-height:35px;color:#666;">每页显示{{listQuery.size}}条 共{{listQuery.total}}条</span>
+    <el-card>
+      <span class="" style="line-height:35px;color:#666;">每页显示{{listQuery.size}}条 共{{listQuery.total}}条</span>
         <el-pagination
           background
           layout="prev, pager, next"
@@ -77,8 +76,7 @@
           :show-all-levels="false"
           :total="listQuery.total" style="float:right">
         </el-pagination>
-      </el-col>
-    </el-row>
+    </el-card>
 
     <!--弹出窗口-->
     <el-dialog
@@ -120,7 +118,6 @@
 export default {
   data() {
     return {
-      tableHeight:window.innerHeight - 220,
       list: null,
       listLoading: true,
       listQuery: {
