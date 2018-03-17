@@ -22,7 +22,7 @@ import api from './api/index.js'
 // 将API方法绑定到全局
 Vue.prototype.$api = api
 
-Vue.use(ElementUI, { locale })
+Vue.use(ElementUI, { locale, size: 'small'})
 
 Vue.config.productionTip = false
 

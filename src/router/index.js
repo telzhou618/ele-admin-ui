@@ -75,20 +75,6 @@ export const constantRouterMap = [
       }
     ]
   },
-
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: _import('form/index'),
-        meta: { title: '礼包管理', icon: 'gifts' }
-      }
-    ]
-  },
-
   { path: '*', redirect: '/404', hidden: true }
 ]
 
