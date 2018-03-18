@@ -14,7 +14,7 @@
    </el-card>
     <!--数据-->
     <el-card>
-    <el-table  :data="list" v-loading.body="listLoading" @selection-change="selsChange" element-loading-text="Loading"  fit highlight-current-row>
+    <el-table border  :data="list" v-loading.body="listLoading" @selection-change="selsChange" element-loading-text="Loading"  fit highlight-current-row>
       <el-table-column
         type="selection"
         width="30">
@@ -205,7 +205,7 @@ export default {
         fds.roleIds = response.data
         this.form.fields = Object.assign(fds, row);
       })
-     //this.$refs.form.resetFields()
+      this.$refs['form'].resetFields()
     },
     //获取数据列表
     fetchData() {
