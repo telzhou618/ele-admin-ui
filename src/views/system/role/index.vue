@@ -59,19 +59,18 @@
           </template>
         </el-table-column>
       </el-table>
-    </el-card>
     <!--分页条-->
-    <el-card>
+    <div style="margin-top:10px;">
       <span class="" style="line-height:35px;color:#666;">每页显示{{listQuery.size}}条 共{{listQuery.total}}条</span>
-        <el-pagination
-          background
-          layout="prev, pager, next"
-          @current-change = "changePage"
-          :page-size="listQuery.size"
-          :total="listQuery.total" style="float:right">
-        </el-pagination>
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        @current-change = "changePage"
+        :page-size="listQuery.size"
+        :total="listQuery.total" style="float:right">
+      </el-pagination>
+    </div>
     </el-card>
-
     <!--弹出窗口-->
     <el-dialog
       :title="form.title+'-角色'"
