@@ -55,7 +55,7 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 .title{
   font-size: 14px;
-  line-height: 40px;
+  line-height: 35px;
   margin-right: 10px;
   float: left;
 }
@@ -82,17 +82,17 @@ export default {
     right: 35px;
     .avatar-wrapper {
       cursor: pointer;
-      margin-top: 5px;
+      margin-top: 10px;
       position: relative;
       .user-avatar {
-        width: 40px;
-        height: 40px;
+        width: 30px;
+        height: 30px;
         border-radius: 20px;
       }
       .el-icon-caret-bottom {
         position: absolute;
         right: -20px;
-        top: 25px;
+        top: 10px;
         font-size: 12px;
       }
     }

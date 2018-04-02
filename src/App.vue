@@ -21,5 +21,13 @@ export default {
 .el-card{
   margin-bottom: 5px; 
 }
+.el-submenu .el-menu-item {
+    height: 40px;
+    line-height: 40px;
+}
+.el-menu-item, .el-submenu__title {
+    height: 40px;
+    line-height: 40px;
+}
 </style>
 
