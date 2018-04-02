@@ -29,5 +29,8 @@ export default {
     height: 40px;
     line-height: 40px;
 }
+.app-container{
+  padding-top: 0px;
+}
 </style>
 

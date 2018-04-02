@@ -21,13 +21,13 @@ import Layout from '../views/layout/Layout'
 export const constantRouterMap = [
   { path: '/login', component: _import('login/index'), hidden: true },
   { path: '/404', component: _import('404'), hidden: true },
-
+  
   {
     path: '',
     component: Layout,
     redirect: '/dashboard',
     name: 'Dashboard',
-    hidden: true,
+    hidden: false,
     children: [{
       path: 'dashboard',
       meta: { title: '首页',icon: 'dashboard'  },
